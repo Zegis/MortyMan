@@ -3,6 +3,7 @@ var map, mapLayer;
 var player;
 var controls;
 var scorePills, superPills;
+var scoreTxt, score;
 
 function preload(){
 
@@ -20,6 +21,9 @@ function create(){
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
+	score = 0;
+	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
+	
 };
 
 function createMap(){
@@ -56,7 +60,7 @@ function createPlayer(){
 function update(){
 
 	this.game.physics.arcade.collide(player,mapLayer);
-	this.game.physics.arcade.collide(player,scorePills,score);
+	this.game.physics.arcade.collide(player,scorePills,updateScore);
 
 	player.body.velocity.x = 0;
 	player.body.velocity.y = 0;
@@ -74,9 +78,10 @@ function update(){
 		alert("Victory!");
 };
 
-function score(player,pill){
+function updateScore(player,pill){
 	console.log("!");
 	pill.kill();
-	
+	score += 10;
+	scoreTxt.setText("Score: " + score);
 	console.log(scorePills.countDead());
 };
