@@ -1,12 +1,13 @@
 var game = new Phaser.Game(28 * 28,31 * 28, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-var map, mapLayer, pillsLayer;
+var map, mapLayer;
 var player;
 var controls;
+var scorePills, superPills;
 
 function preload(){
 
 	game.load.image("tilemap","assets/tilemap.png");
-	game.load.image("pills","assets/pills.png");
+	game.load.spritesheet("pills","assets/pills.png",28,28);
 	game.load.tilemap("map","map/tmap.json",null,Phaser.Tilemap.TILED_JSON);
 	game.load.image("pacman","assets/pacman.png");
 	
@@ -19,8 +20,6 @@ function create(){
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
-
-
 };
 
 function createMap(){
@@ -30,10 +29,16 @@ function createMap(){
 	map.addTilesetImage("pills","pills");
 	
 	mapLayer = map.createLayer("tiles");
-	pillsLayer = map.createLayer("pills");
+	
 	mapLayer.resizeWorld();
 	
 	map.setCollisionByExclusion([1],true, "tiles");
+	
+	scorePills = game.add.group();
+	superPills = game.add.group();
+	
+	map.createFromTiles(6,null,"pills","pills",scorePills, {frame: 0});
+	map.createFromTiles(7,null,"pills","pills",superPills, {frame: 1});
 };
 
 function createPlayer(){
