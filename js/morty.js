@@ -52,7 +52,8 @@ function createMap(){
 };
 
 function createPlayer(){
-	player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman");
+	//player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman");
+	player = game.add.sprite((28*3) , (28 * 14)+1,"pacman");
 	game.physics.enable(player, Phaser.Physics.ARCADE);
 	
 }
@@ -76,6 +77,12 @@ function update(){
 		
 	if(scorePills.countDead() == scorePills.length)
 		alert("Victory!");
+		
+		
+	if( (player.x) >= (28*28+14))
+		player.x = -28;
+	else if((player.x) <= -28)
+		player.x = (28*28);
 };
 
 function updateScore(player,pill){
