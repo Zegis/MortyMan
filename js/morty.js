@@ -4,6 +4,8 @@ var player;
 var controls;
 var scorePills, superPills;
 var scoreTxt, score;
+var blinky;
+var isSuper;
 
 function preload(){
 
@@ -11,7 +13,7 @@ function preload(){
 	game.load.spritesheet("pills","assets/pills.png",28,28);
 	game.load.tilemap("map","map/tmap.json",null,Phaser.Tilemap.TILED_JSON);
 	game.load.image("pacman","assets/pacman.png");
-	
+	game.load.image("blinky","assets/red_ghost.png");
 };
 
 function create(){
@@ -19,11 +21,15 @@ function create(){
 	createMap();
 	createPlayer();
 	
+	blinky = game.add.sprite(28*5, (28*14)+1,"blinky");
+	game.physics.enable(blinky, Phaser.Physics.ARCADE);
+	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
 	score = 0;
 	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
 	
+	isSuper = false;
 };
 
 function createMap(){
@@ -42,6 +48,8 @@ function createMap(){
 	game.physics.enable(scorePills, Phaser.Physics.ARCADE);
 	scorePills.enableBody = true;
 	superPills = game.add.group();
+	game.physics.enable(superPills, Phaser.Physics.ARCADE);
+	superPills.enableBody = true;
 	
 	map.createFromTiles(6,null,"pills","pills",scorePills, {frame: 0});
 	map.createFromTiles(7,null,"pills","pills",superPills, {frame: 1});
@@ -62,6 +70,8 @@ function update(){
 
 	this.game.physics.arcade.collide(player,mapLayer);
 	this.game.physics.arcade.collide(player,scorePills,updateScore);
+	this.game.physics.arcade.collide(player,superPills, makeSuper);
+	this.game.physics.arcade.collide(player,blinky, touchGhost);
 
 	player.body.velocity.x = 0;
 	player.body.velocity.y = 0;
@@ -77,7 +87,8 @@ function update(){
 		
 	if(scorePills.countDead() == scorePills.length)
 		alert("Victory!");
-		
+	
+	game.debug.text(isSuper,20,20, "#CCC");
 		
 	if( (player.x) >= (28*28+14))
 		player.x = -28;
@@ -92,3 +103,15 @@ function updateScore(player,pill){
 	scoreTxt.setText("Score: " + score);
 	console.log(scorePills.countDead());
 };
+
+function makeSuper(player,pill){
+	pill.kill();
+	isSuper = true;
+}
+
+function touchGhost(player, ghost){
+	if(isSuper)
+		ghost.kill();
+	else
+		player.kill();
+}
