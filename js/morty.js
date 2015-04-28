@@ -14,6 +14,7 @@ function preload(){
 	game.load.tilemap("map","map/tmap.json",null,Phaser.Tilemap.TILED_JSON);
 	game.load.image("pacman","assets/pacman.png");
 	game.load.image("blinky","assets/red_ghost.png");
+	game.load.image("scared","assets/frighten_ghost.png");
 };
 
 function create(){
@@ -108,6 +109,7 @@ function updateScore(player,pill){
 function makeSuper(player,pill){
 	pill.kill();
 	isSuper = true;
+	blinky.loadTexture("scared");
 }
 
 function touchGhost(player, ghost){
