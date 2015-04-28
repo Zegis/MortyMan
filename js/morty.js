@@ -21,8 +21,9 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = game.add.sprite(28*5, (28*14)+1,"blinky");
+	blinky = game.add.sprite(28*6, (28*14)+1,"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
+	blinky.body.bounce = 0;
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
