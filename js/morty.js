@@ -6,6 +6,7 @@ var scorePills, superPills;
 var scoreTxt, score;
 var blinky;
 var isSuper;
+var superTimer;
 
 function preload(){
 
@@ -32,6 +33,7 @@ function create(){
 	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
 	
 	isSuper = false;
+	superTimer = game.time.create(false);
 };
 
 function createMap(){
@@ -99,17 +101,26 @@ function update(){
 };
 
 function updateScore(player,pill){
-	console.log("!");
 	pill.kill();
 	score += 10;
 	scoreTxt.setText("Score: " + score);
-	console.log(scorePills.countDead());
 };
 
 function makeSuper(player,pill){
+	if(isSuper == false)
+	{
 	pill.kill();
 	isSuper = true;
 	blinky.loadTexture("scared");
+	superTimer.add(6000, makeNormal,this);
+	superTimer.start();
+	}
+}
+
+function makeNormal()
+{
+	isSuper = false;
+	blinky.loadTexture("blinky");
 }
 
 function touchGhost(player, ghost){
