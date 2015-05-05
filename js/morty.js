@@ -158,7 +158,7 @@ function touchGhost(player, ghost){
 
 function render(){
 	
-	game.debug.text(isSuper,20,20, "#CCC");
+	/*game.debug.text(isSuper,20,20, "#CCC");
 	
 	for (var t = 1; t < 5; t++)
     {
@@ -182,6 +182,6 @@ function render(){
 		game.debug.geom(new Phaser.Rectangle(directions[t].worldX, directions[t].worldY, 28, 28), color, true);
     }
 
-    game.debug.geom(this.turnPoint, '#ffff00');
+    game.debug.geom(this.turnPoint, '#ffff00');*/
 	
 }
