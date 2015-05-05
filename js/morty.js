@@ -81,8 +81,8 @@ function update(){
 
 	this.game.physics.arcade.collide(player,mapLayer);
 	this.game.physics.arcade.overlap(player,scorePills,updateScore);
-	this.game.physics.arcade.collide(player,superPills, makeSuper);
-	this.game.physics.arcade.collide(player,blinky, touchGhost);
+	this.game.physics.arcade.overlap(player,superPills, makeSuper);
+	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 
 	// get surroundings
 	marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
