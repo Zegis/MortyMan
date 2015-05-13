@@ -93,7 +93,9 @@ function update(){
 	directions[3] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
 	directions[4] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
 	
+	game.debug.text(map.getTile(marker.x, marker.y,mapLayer).x + " " + map.getTile(marker.x, marker.y,mapLayer).y ,20,20, "#CCC")
 	
+	// check Key
 	if(controls.left.isDown)
 	{
 		player.body.velocity.x = -112;
@@ -143,8 +145,7 @@ function makeSuper(player,pill){
 	}
 }
 
-function makeNormal()
-{
+function makeNormal(){
 	isSuper = false;
 	blinky.loadTexture("blinky");
 }
