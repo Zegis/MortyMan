@@ -1,4 +1,4 @@
-var game = new Phaser.Game(28 * 28,31 * 28, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(28 * 28,31 * 28, Phaser.AUTO, '', { preload: preload, create: create, update: update});
 var map, mapLayer;
 var player;
 var controls;
@@ -29,7 +29,8 @@ function create(){
 	
 	blinky = game.add.sprite(28*6, (28*1)+1,"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
-	blinky.body.bounce = 0;
+	blinky.body.bounce.y = 1;
+	blinky.body.bounce.x = 1;
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -41,6 +42,8 @@ function create(){
 	
 	marker = new Phaser.Point();
 	directions = [null, null, null, null, null];
+	
+	blinky.body.velocity.x = 100;
 };
 
 function createMap(){
@@ -84,6 +87,8 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 
+	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
+	
 	// get surroundings
 	marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
 	marker.y = this.math.snapToFloor(Math.floor(player.y), 28) / 28;
@@ -157,32 +162,6 @@ function touchGhost(player, ghost){
 		player.kill();
 }
 
-function render(){
-	
-	game.debug.text(isSuper,20,20, "#CCC");
-	
-	for (var t = 1; t < 5; t++)
-    {
-        if (directions[t] === null)
-        {
-            continue;
-        }
-
-        var color = 'rgba(0,255,0,0.3)';
-
-        if (directions[t].index !== 1)
-        {
-			color = 'rgba(255,0,0,0.3)';
-        }
-
-        if (t === current)
-        {
-			color = 'rgba(255,255,255,0.3)';
-		}
-
-		game.debug.geom(new Phaser.Rectangle(directions[t].worldX, directions[t].worldY, 28, 28), color, true);
-    }
-
-    game.debug.geom(this.turnPoint, '#ffff00');
-	
+function ghostCollide(ghost, tile)
+{
 }
