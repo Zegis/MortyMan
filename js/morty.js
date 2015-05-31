@@ -29,8 +29,8 @@ function create(){
 	
 	blinky = game.add.sprite(28*6, (28*1)+1,"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
-	blinky.body.bounce.y = 1;
-	blinky.body.bounce.x = 1;
+	blinky.body.bounce.y = 0;
+	blinky.body.bounce.x = 0;
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -44,6 +44,7 @@ function create(){
 	directions = [null, null, null, null, null];
 	
 	blinky.body.velocity.x = 100;
+	blinky.direction = 2;
 };
 
 function createMap(){
@@ -172,5 +173,38 @@ function ghostCollide(ghost, tile)
 	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
 	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
 	
-	game.debug.text(directions[2].x + " " + directions[2].y + " " + directions[2].index ,20,20, "#CCC")
+	for( var i = 1; i < 5;)
+	{
+		if(i !== ghost.direction && directions[i].index === 1)
+		{
+			if(i === 1)
+			{
+				ghost.body.velocity.y = -100;
+				ghost.direction = 3;
+			}
+			else if(i === 2)
+			{
+				ghost.direction = 4;
+				ghost.body.velocity.x = -100;
+			}
+			else if(i === 3)
+			{
+				ghost.direction = 1;
+				ghost.body.velocity.y = 100;
+			}
+			else if(i === 4)
+			{
+				ghost.direction = 2;
+				ghost.body.velocity.x = 100;
+			}
+				
+			break;
+		}
+		else
+		{
+			++i;
+		}
+	}
+	
+	game.debug.text(ghost.direction,20,20, "#CCC")
 }
