@@ -98,7 +98,7 @@ function update(){
 	directions[3] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
 	directions[4] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
 	
-	game.debug.text(map.getTile(marker.x, marker.y,mapLayer).x + " " + map.getTile(marker.x, marker.y,mapLayer).y ,20,20, "#CCC")
+	// game.debug.text(map.getTile(marker.x, marker.y,mapLayer).x + " " + map.getTile(marker.x, marker.y,mapLayer).y ,20,20, "#CCC")
 	
 	// check Key
 	if(controls.left.isDown)
@@ -164,4 +164,13 @@ function touchGhost(player, ghost){
 
 function ghostCollide(ghost, tile)
 {
+	marker.x = Phaser.Math.snapToFloor(Math.floor(ghost.x),28) / 28;
+	marker.y = Phaser.Math.snapToFloor(Math.floor(ghost.y),28) / 28;
+	
+	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
+	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
+	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
+	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
+	
+	game.debug.text(directions[2].x + " " + directions[2].y + " " + directions[2].index ,20,20, "#CCC")
 }
