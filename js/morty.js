@@ -29,8 +29,8 @@ function create(){
 	
 	blinky = game.add.sprite(28*6, (28*1)+1,"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
-	blinky.body.bounce.y = 1;
-	blinky.body.bounce.x = 1;
+	blinky.body.bounce.y = 0;
+	blinky.body.bounce.x = 0;
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -88,16 +88,16 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 
-	this.game.physics.arcade.collide(blinky,mapLayer);
+	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
 	// get surroundings
-	// marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
-	// marker.y = this.math.snapToFloor(Math.floor(player.y), 28) / 28;
+	marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
+	marker.y = this.math.snapToFloor(Math.floor(player.y), 28) / 28;
 	
-	// directions[1] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	// directions[2] = map.getTileRight(mapLayer.index, marker.x, marker.y);
-	// directions[3] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	// directions[4] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
+	directions[1] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
+	directions[2] = map.getTileRight(mapLayer.index, marker.x, marker.y);
+	directions[3] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
+	directions[4] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
 	
 	// game.debug.text(map.getTile(marker.x, marker.y,mapLayer).x + " " + map.getTile(marker.x, marker.y,mapLayer).y ,20,20, "#CCC")
 	
@@ -163,3 +163,48 @@ function touchGhost(player, ghost){
 		player.kill();
 }
 
+function ghostCollide(ghost, tile)
+{
+	marker.x = Phaser.Math.snapToFloor(Math.floor(ghost.x),28) / 28;
+	marker.y = Phaser.Math.snapToFloor(Math.floor(ghost.y),28) / 28;
+	
+	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
+	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
+	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
+	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
+	
+	for( var i = 1; i < 5;)
+	{
+		if(i !== ghost.movingFrom && directions[i].index === 1)
+		{
+			if(i === 1)
+			{
+				ghost.body.velocity.y = -100;
+				ghost.movingFrom = 3;
+			}
+			else if(i === 2)
+			{
+				ghost.movingFrom = 4;
+				ghost.body.velocity.x = -100;
+			}
+			else if(i === 3)
+			{
+				ghost.movingFrom = 1;
+				ghost.body.velocity.y = 100;
+			}
+			else if(i === 4)
+			{
+				ghost.movingFrom = 2;
+				ghost.body.velocity.x = 100;
+			}
+				
+			break;
+		}
+		else
+		{
+			++i;
+		}
+	}
+	
+	game.debug.text(ghost.movingFrom,20,20, "#CCC")
+}
