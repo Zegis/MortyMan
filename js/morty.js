@@ -10,9 +10,11 @@ var superTimer;
 
 var marker;
 var directions;
+var distance;
 var current;
 
 var decisionPoints;
+var target;
 
 function preload(){
 
@@ -29,7 +31,7 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = game.add.sprite(28*7, (28*1)+1,"blinky");
+	blinky = game.add.sprite(28*2, (28*5)+1,"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
 	blinky.body.bounce.y = 0;
 	blinky.body.bounce.x = 0;
@@ -43,7 +45,9 @@ function create(){
 	superTimer = game.time.create(false);
 	
 	marker = new Phaser.Point(0,0);
+	target = new Phaser.Point(9,13);
 	directions = [null, null, null, null, null];
+	distance = [null, null, null, null, null];
 	
 	blinky.body.velocity.x = 100;
 	blinky.direction = 2;
@@ -104,27 +108,17 @@ function update(){
 	marker.x = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
 	marker.y = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
 	
-	//game.debug.text(marker.x + " " + marker.y,20,20, "#CCC")
+	game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
 	if(decisionPoints.contains(marker)) // if in decision point
 	{
 		game.debug.text("true",20,20, "#CCC");
+		decideGhostDirection();
 	}
 	else
 	{
 		game.debug.text("false",20,20, "#CCC");
 	}
 		this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
-	
-	// get surroundings
-	marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
-	marker.y = this.math.snapToFloor(Math.floor(player.y), 28) / 28;
-	
-	directions[1] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[2] = map.getTileRight(mapLayer.index, marker.x, marker.y);
-	directions[3] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[4] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	
-	// game.debug.text(map.getTile(marker.x, marker.y,mapLayer).x + " " + map.getTile(marker.x, marker.y,mapLayer).y ,20,20, "#CCC")
 	
 	// check Key
 	if(controls.left.isDown)
@@ -227,6 +221,21 @@ function ghostCollide(ghost, tile)
 			++i;
 		}
 	}
+}
+
+function decideGhostDirection(){
+
+	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
+	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
+	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
+	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
+	
+	for(var i=1; i<5; i++)
+	{	
+		distance[i] = Phaser.Point.distance(target,directions[i]);
+	}
+	distance[blinky.direction] = 200;
+	console.log(distance);
 }
 
 Array.prototype.contains = function(obj){
