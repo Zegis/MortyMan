@@ -105,15 +105,15 @@ function update(){
 	marker.y = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
 	
 	//game.debug.text(marker.x + " " + marker.y,20,20, "#CCC")
-	if(Phaser.Point.equals(marker,decisionPoints[0])) // if in decision point
+	if(decisionPoints.contains(marker)) // if in decision point
 	{
 		game.debug.text("true",20,20, "#CCC");
 	}
 	else
 	{
-		this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
+		game.debug.text("false",20,20, "#CCC");
 	}
-	
+		this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
 	// get surroundings
 	marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
@@ -228,3 +228,13 @@ function ghostCollide(ghost, tile)
 		}
 	}
 }
+
+Array.prototype.contains = function(obj){
+	var i = this.length;
+	while(i--)
+	{
+		if(Phaser.Point.equals(obj,this[i]))
+			return true;
+	}
+	return false;
+};
