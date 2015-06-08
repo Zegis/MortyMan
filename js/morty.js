@@ -12,6 +12,8 @@ var marker;
 var directions;
 var current;
 
+var decisionPoints;
+
 function preload(){
 
 	game.load.image("tilemap","assets/tilemap.png");
@@ -27,7 +29,7 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = game.add.sprite(28*6, (28*1)+1,"blinky");
+	blinky = game.add.sprite(28*7, (28*1)+1,"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
 	blinky.body.bounce.y = 0;
 	blinky.body.bounce.x = 0;
@@ -40,11 +42,22 @@ function create(){
 	isSuper = false;
 	superTimer = game.time.create(false);
 	
-	marker = new Phaser.Point();
+	marker = new Phaser.Point(0,0);
 	directions = [null, null, null, null, null];
 	
 	blinky.body.velocity.x = 100;
 	blinky.direction = 2;
+	
+	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
+	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
+	new Phaser.Point(15,5),new Phaser.Point(18,5),new Phaser.Point(21,5),new Phaser.Point(26,5),
+	new Phaser.Point(6,8),new Phaser.Point(21,8),
+	new Phaser.Point(6,14),new Phaser.Point(9,14),new Phaser.Point(18,14),new Phaser.Point(24,14),
+	new Phaser.Point(9,17),new Phaser.Point(18,17),
+	new Phaser.Point(6,20),new Phaser.Point(9,20),new Phaser.Point(18,20),new Phaser.Point(21,20),
+	new Phaser.Point(6,23),new Phaser.Point(9,23),new Phaser.Point(18,23),new Phaser.Point(21,23),
+	new Phaser.Point(3,26),new Phaser.Point(24,26),
+	new Phaser.Point(12,29),new Phaser.Point(15,29)];
 };
 
 function createMap(){
@@ -87,8 +100,20 @@ function update(){
 	this.game.physics.arcade.overlap(player,scorePills,updateScore);
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
-
-	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
+	
+	marker.x = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
+	marker.y = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
+	
+	//game.debug.text(marker.x + " " + marker.y,20,20, "#CCC")
+	if(Phaser.Point.equals(marker,decisionPoints[0])) // if in decision point
+	{
+		game.debug.text("true",20,20, "#CCC");
+	}
+	else
+	{
+		this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
+	}
+	
 	
 	// get surroundings
 	marker.x = this.math.snapToFloor(Math.floor(player.x), 28) / 28;
@@ -165,9 +190,6 @@ function touchGhost(player, ghost){
 
 function ghostCollide(ghost, tile)
 {
-	marker.x = Phaser.Math.snapToFloor(Math.floor(ghost.x),28) / 28;
-	marker.y = Phaser.Math.snapToFloor(Math.floor(ghost.y),28) / 28;
-	
 	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
 	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
 	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
@@ -205,6 +227,4 @@ function ghostCollide(ghost, tile)
 			++i;
 		}
 	}
-	
-	game.debug.text(ghost.direction,20,20, "#CCC")
 }
