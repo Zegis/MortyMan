@@ -236,6 +236,37 @@ function decideGhostDirection(){
 	}
 	distance[blinky.direction] = 200;
 	console.log(distance);
+	
+	var smallest = 1;
+	for(i =2; i<5; i++)
+	{
+		if(distance[smallest] > distance[i]) smallest = i;
+	}
+	
+	if(smallest === 1)
+	{
+		blinky.body.velocity.x = 0
+		blinky.body.velocity.y = -100;
+		blinky.direction = 3;
+	}
+	else if(smallest === 2)
+	{
+		blinky.direction = 4;
+		blinky.body.velocity.x = -100;
+		blinky.body.velocity.y = 0
+	}
+	else if(smallest === 3)
+	{
+		blinky.direction = 1;
+		blinky.body.velocity.y = 100;
+		blinky.body.velocity.x = 0
+	}
+	else if(smallest === 4)
+	{
+		blinky.direction = 2;
+		blinky.body.velocity.y = 0
+		blinky.body.velocity.x = 100;
+	}
 }
 
 Array.prototype.contains = function(obj){
