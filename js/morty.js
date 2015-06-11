@@ -31,7 +31,7 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = game.add.sprite((28*1), (28*1),"blinky");
+	blinky = game.add.sprite((28*1), (28*2),"blinky");
 //	blinky.anchor.set(0.5);
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
 	blinky.body.bounce.y = 0;
@@ -47,7 +47,7 @@ function create(){
 	superTimer = game.time.create(false);
 	
 	marker = new Phaser.Point(0,0);
-	target = new Phaser.Point(19,23);
+	target = new Phaser.Point(1,29);
 	directions = [null, null, null, null, null];
 	distance = [null, null, null, null, null];
 	
@@ -111,18 +111,20 @@ function update(){
 	var	tmpY;
 	
 	if(blinky.body.velocity.x < 0)
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x +26),28) / 28;
+		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x + blinky.width),28) / 28;
 	else
 		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
 		
 	if(blinky.body.velocity.y < 0)
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y +26),28) / 28;
+	{
+		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y + blinky.height),28) / 28;
+	}
 	else
 		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
 	
-	//game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
+	game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
 	//game.debug.geom(new Phaser.Rectangle(tmpX*28, tmpY*28, 28, 28), "#CCCCFF", true);
-	game.debug.text("x: " + blinky.width, 20, 20, "#CCC");
+	// game.debug.text(test,20, 20, "#CCC");
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
 		marker.y = tmpY;
@@ -160,6 +162,11 @@ function update(){
 	if(scorePills.countDead() == scorePills.length)
 		alert("Victory!");
 	
+	if(game.input.activePointer.isDown)
+	{
+		target.x = Phaser.Math.snapToFloor(Math.floor(game.input.x),28) / 28;
+		target.y = Phaser.Math.snapToFloor(Math.floor(game.input.y),28) / 28;
+	}
 	
 		
 	if( (player.x) >= (28*28+14))
