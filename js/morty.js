@@ -32,7 +32,7 @@ function create(){
 	createPlayer();
 	
 	blinky = game.add.sprite((28*1), (28*1),"blinky");
-	blinky.anchor.setTo(0,0);
+//	blinky.anchor.set(0.5);
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
 	blinky.body.bounce.y = 0;
 	blinky.body.bounce.x = 0;
@@ -107,13 +107,22 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	
-	var	tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
-	var	tmpY = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
+	var	tmpX ;
+	var	tmpY;
 	
+	if(blinky.body.velocity.x < 0)
+		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x +26),28) / 28;
+	else
+		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
+		
+	if(blinky.body.velocity.y < 0)
+		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y +26),28) / 28;
+	else
+		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
 	
 	//game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
 	//game.debug.geom(new Phaser.Rectangle(tmpX*28, tmpY*28, 28, 28), "#CCCCFF", true);
-	//game.debug.text("x: " + blinky.x + " y: " + blinky.y, 20, 20, "#CCC");
+	game.debug.text("x: " + blinky.width, 20, 20, "#CCC");
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
 		marker.y = tmpY;
@@ -122,6 +131,7 @@ function update(){
 			decideGhostDirection();
 		}
 	}
+
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
 	
