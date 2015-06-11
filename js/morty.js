@@ -47,7 +47,7 @@ function create(){
 	superTimer = game.time.create(false);
 	
 	marker = new Phaser.Point(0,0);
-	target = new Phaser.Point(19,29);
+	target = new Phaser.Point(19,23);
 	directions = [null, null, null, null, null];
 	distance = [null, null, null, null, null];
 	
@@ -111,9 +111,9 @@ function update(){
 	var	tmpY = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
 	
 	
-	game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
-	game.debug.geom(new Phaser.Rectangle(tmpX*28, tmpY*28, 28, 28), "#CCCCFF", true);
-	game.debug.text("x: " + blinky.x + " y: " + blinky.y, 20, 20, "#CCC");
+	//game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
+	//game.debug.geom(new Phaser.Rectangle(tmpX*28, tmpY*28, 28, 28), "#CCCCFF", true);
+	//game.debug.text("x: " + blinky.x + " y: " + blinky.y, 20, 20, "#CCC");
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
 		marker.y = tmpY;
