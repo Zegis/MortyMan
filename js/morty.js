@@ -122,15 +122,13 @@ function update(){
 	else
 		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
 	
-	game.debug.geom(new Phaser.Rectangle(target.x*28, target.y*28, 28, 28), "#CCFFCC", true);
-	//game.debug.geom(new Phaser.Rectangle(tmpX*28, tmpY*28, 28, 28), "#CCCCFF", true);
-	// game.debug.text(test,20, 20, "#CCC");
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
 		marker.y = tmpY;
 		if(decisionPoints.contains(marker)) // if in decision point
 		{
-			decideGhostDirection();
+			updateTarget(player,decideGhostDirection);
+			// decideGhostDirection();
 		}
 	}
 
@@ -160,19 +158,20 @@ function update(){
 	}
 	
 	if(scorePills.countDead() == scorePills.length)
-		alert("Victory!");
-	
-	if(game.input.activePointer.isDown)
-	{
-		target.x = Phaser.Math.snapToFloor(Math.floor(game.input.x),28) / 28;
-		target.y = Phaser.Math.snapToFloor(Math.floor(game.input.y),28) / 28;
-	}
-	
+		alert("Victory!");	
 		
 	if( (player.x) >= (28*28+14))
 		player.x = -28;
 	else if((player.x) <= -28)
 		player.x = (28*28);
+};
+
+function updateTarget(player, callback)
+{
+	target.x = Phaser.Math.snapToFloor(Math.floor(player.x),28) / 28;
+	target.y = Phaser.Math.snapToFloor(Math.floor(player.y),28) / 28;
+	
+	callback();
 };
 
 function updateScore(player,pill){
@@ -272,8 +271,7 @@ function decideGhostDirection()
 		if(distance[smallest] > distance[i])
 			smallest = i;
 	}
-	console.log(distance);
-	console.log(smallest);
+	
 	if(smallest != blinky.direction && directions[smallest].index === 1)
 	{
 		if(smallest === 1)
