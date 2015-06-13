@@ -160,10 +160,16 @@ function update(){
 	if(scorePills.countDead() == scorePills.length)
 		alert("Victory!");	
 		
-	if( (player.x) >= (28*28+14))
-		player.x = -28;
-	else if((player.x) <= -28)
-		player.x = (28*28);
+	tunel(player);
+	tunel(blinky);
+};
+
+function tunel(object)
+{
+	if(object.x >= (28*28+14))
+		object.x = -28;
+	else if(object.x <= -28)
+		object.x = (28*28);
 };
 
 function updateTarget(player, callback)
