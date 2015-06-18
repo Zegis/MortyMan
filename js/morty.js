@@ -14,13 +14,11 @@ var superTimer;
 var marker;
 var directions;
 var distance;
-var current;
 
 var decisionPoints;
 var target;
 
 function preload(){
-
 	game.load.image("tilemap","assets/tilemap.png");
 	game.load.spritesheet("pills","assets/pills.png",28,28);
 	game.load.tilemap("map","map/tmap.json",null,Phaser.Tilemap.TILED_JSON);
@@ -38,7 +36,6 @@ function create(){
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
 	blinky.body.bounce.y = 0;
 	blinky.body.bounce.x = 0;
-	
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -127,7 +124,7 @@ function update(){
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
 		marker.y = tmpY;
-		if(decisionPoints.contains(marker)) // if in decision point
+		if(Utils.arrayContains(decisionPoints,marker)) // if in decision point
 		{
 			updateTarget(player,decideGhostDirection);
 		}
@@ -140,22 +137,18 @@ function update(){
 	if(controls.left.isDown)
 	{
 		player.body.velocity.x = -93;
-		current = Phaser.LEFT;
 	}
 	else if(controls.right.isDown)
 	{
 		player.body.velocity.x = 93;
-		current = Phaser.RIGHT;
 	}
 	if(controls.down.isDown)
 	{
 		player.body.velocity.y = 93;
-		current = Phaser.DOWN;
 	}
 	else if(controls.up.isDown)
 	{
 		player.body.velocity.y = -93;
-		current = Phaser.UP;
 	}
 	
 	if(scorePills.countDead() == scorePills.length)
@@ -311,13 +304,3 @@ function decideGhostDirection()
 		}
 	}
 }
-
-Array.prototype.contains = function(obj){
-	var i = this.length;
-	while(i--)
-	{
-		if(Phaser.Point.equals(obj,this[i]))
-			return true;
-	}
-	return false;
-};

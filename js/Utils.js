@@ -8,6 +8,13 @@ var Utils = {
 	Left: 1,
 	Down: 2,
 	Right: 3,
+	arrayContains: function(array, object){
+		var i = array.length;
+		while(i--)
+		{
+			if(Phaser.Point.equals(object,array[i]))
+				return true;
+		}
+		return false;
+	}
 };
-
-console.log("buhuhu");
