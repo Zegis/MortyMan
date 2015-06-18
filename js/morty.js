@@ -1,4 +1,7 @@
-var game = new Phaser.Game(28 * 28,31 * 28, Phaser.AUTO, '', { preload: preload, create: create, update: update});
+/* global Phaser*/
+/* global Utils */
+
+var game = new Phaser.Game(Utils.mapWidth, Utils.mapHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update});
 var map, mapLayer;
 var player;
 var controls;
@@ -31,8 +34,7 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = game.add.sprite((28*1), (28*2),"blinky");
-//	blinky.anchor.set(0.5);
+	blinky = game.add.sprite((Utils.TILE_SIZE*1), (Utils.TILE_SIZE*2),"blinky");
 	game.physics.enable(blinky, Phaser.Physics.ARCADE);
 	blinky.body.bounce.y = 0;
 	blinky.body.bounce.x = 0;
@@ -95,7 +97,7 @@ function createMap(){
 
 function createPlayer(){
 	//player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman"); // original start point
-	player = game.add.sprite((28*3) , (28 * 14),"pacman"); // debug start point
+	player = game.add.sprite((Utils.TILE_SIZE*3) , (Utils.TILE_SIZE * 14),"pacman"); // debug start point
 	game.physics.enable(player, Phaser.Physics.ARCADE);
 	
 }
@@ -111,16 +113,16 @@ function update(){
 	var	tmpY;
 	
 	if(blinky.body.velocity.x < 0)
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x + blinky.width),28) / 28;
+		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x + blinky.width),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	else
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
+		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 		
 	if(blinky.body.velocity.y < 0)
 	{
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y + blinky.height),28) / 28;
+		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y + blinky.height),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	}
 	else
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
+		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
@@ -128,7 +130,6 @@ function update(){
 		if(decisionPoints.contains(marker)) // if in decision point
 		{
 			updateTarget(player,decideGhostDirection);
-			// decideGhostDirection();
 		}
 	}
 
@@ -166,16 +167,16 @@ function update(){
 
 function tunel(object)
 {
-	if(object.x >= (28*28+14))
-		object.x = -28;
-	else if(object.x <= -28)
-		object.x = (28*28);
+	if(object.x >= (Utils.TILE_SIZE*28+14))
+		object.x = -1 * Utils.TILE_SIZE;
+	else if(object.x <= -1 * Utils.TILE_SIZE)
+		object.x = (28*Utils.TILE_SIZE);
 };
 
 function updateTarget(player, callback)
 {
-	target.x = Phaser.Math.snapToFloor(Math.floor(player.x),28) / 28;
-	target.y = Phaser.Math.snapToFloor(Math.floor(player.y),28) / 28;
+	target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+	target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	
 	callback();
 };
@@ -258,10 +259,10 @@ function decideGhostDirection()
 	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
 	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
 	
-	blinky.x = marker.x*28;
-	blinky.y = marker.y*28;
+	blinky.x = marker.x*Utils.TILE_SIZE;
+	blinky.y = marker.y*Utils.TILE_SIZE;
 	
-	blinky.body.reset(marker.x*28,marker.y*28);
+	blinky.body.reset(marker.x*Utils.TILE_SIZE,marker.y*Utils.TILE_SIZE);
 	
 	for(var i=1; i<5; i++)
 	{	
