@@ -50,11 +50,11 @@ function create(){
 	
 	marker = new Phaser.Point(0,0);
 	target = new Phaser.Point(1,29);
-	directions = [null, null, null, null, null];
-	distance = [null, null, null, null, null];
+	directions = [null, null, null, null];
+	distance = [null, null, null, null];
 	
 	blinky.body.velocity.x = 93;
-	blinky.direction = 2;
+	blinky.direction = Utils.Left;
 	
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
@@ -213,34 +213,36 @@ function touchGhost(player, ghost){
 function ghostCollide(ghost, tile)
 {
 	
-	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Up] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Left] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Down] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Right] = map.getTileRight(mapLayer.index, marker.x, marker.y);
 	
-	for( var i = 1; i < 5;)
+	var length = directions.length;
+	
+	for( var i = Utils.Up; i < length;)
 	{
 		if(i !== ghost.direction && directions[i].index === 1)
 		{
-			if(i === 1)
+			if(i === Utils.Up)
 			{
 				ghost.body.velocity.y = -93;
-				ghost.direction = 3;
+				ghost.direction = Utils.Down;
 			}
-			else if(i === 2)
+			else if(i === Utils.Left)
 			{
-				ghost.direction = 4;
 				ghost.body.velocity.x = -93;
+				ghost.direction = Utils.Right;
 			}
-			else if(i === 3)
+			else if(i === Utils.Down)
 			{
-				ghost.direction = 1;
 				ghost.body.velocity.y = 93;
+				ghost.direction = Utils.Up;
 			}
-			else if(i === 4)
+			else if(i === Utils.Right)
 			{
-				ghost.direction = 2;
 				ghost.body.velocity.x = 93;
+				ghost.direction = Utils.Left;
 			}
 				
 			break;
@@ -254,17 +256,19 @@ function ghostCollide(ghost, tile)
 
 function decideGhostDirection()
 {
-	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Up] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Left] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Down] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
+	directions[Utils.Right] = map.getTileRight(mapLayer.index, marker.x, marker.y);
 	
 	blinky.x = marker.x*Utils.TILE_SIZE;
 	blinky.y = marker.y*Utils.TILE_SIZE;
 	
 	blinky.body.reset(marker.x*Utils.TILE_SIZE,marker.y*Utils.TILE_SIZE);
 	
-	for(var i=1; i<5; i++)
+	var length = directions.length;
+	
+	for(var i= 0; i < length; i++)
 	{	
 		if(directions[i].index === 1 && i !== blinky.direction)
 			distance[i] = Phaser.Point.distance(target,directions[i]);
@@ -272,8 +276,8 @@ function decideGhostDirection()
 			distance[i] = 2000;
 	}
 	
-	var smallest = 1;
-	for(i=2; i<5; i++)
+	var smallest = 0;
+	for(i=1; i < length; i++)
 	{
 		if(distance[smallest] > distance[i])
 			smallest = i;
@@ -281,29 +285,29 @@ function decideGhostDirection()
 	
 	if(smallest != blinky.direction && directions[smallest].index === 1)
 	{
-		if(smallest === 1)
+		if(smallest === Utils.Up)
 		{
 			blinky.body.velocity.x = 0;
 			blinky.body.velocity.y = -93;
-			blinky.direction = 3;
+			blinky.direction = Utils.Down;
 		}
-		else if(smallest === 2)
+		else if(smallest === Utils.Left)
 		{
-			blinky.direction = 4;
 			blinky.body.velocity.x = -93;
 			blinky.body.velocity.y = 0;
+			blinky.direction = Utils.Right;
 		}
-		else if(smallest === 3)
+		else if(smallest === Utils.Down)
 		{
-			blinky.direction = 1;
 			blinky.body.velocity.y = 93;
 			blinky.body.velocity.x = 0;
+			blinky.direction = Utils.Up;
 		}
-		else if(smallest === 4)
+		else if(smallest === Utils.Right)
 		{
-			blinky.direction = 2;
 			blinky.body.velocity.y = 0;
 			blinky.body.velocity.x = 93;
+			blinky.direction = Utils.Left;
 		}
 	}
 }
