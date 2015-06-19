@@ -32,11 +32,7 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	
 	blinky = new Ghost(game, Utils.TILE_SIZE*1, Utils.TILE_SIZE*2, "blinky");
-	game.physics.enable(blinky, Phaser.Physics.ARCADE);
-	blinky.body.bounce.y = 0;
-	blinky.body.bounce.x = 0;
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
