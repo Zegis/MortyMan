@@ -110,16 +110,16 @@ function update(){
 	var	tmpY;
 	
 	if(blinky.body.velocity.x < 0)
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x + blinky.width),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+		tmpX = Utils.pixelsToTiles(blinky.x + blinky.width);
 	else
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+		tmpX = Utils.pixelsToTiles(blinky.x);
 		
 	if(blinky.body.velocity.y < 0)
 	{
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y + blinky.height),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+		tmpY  = Utils.pixelsToTiles(blinky.y + blinky.height);
 	}
 	else
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+		tmpY  = Utils.pixelsToTiles(blinky.y);
 	
 	if(tmpX != marker.x || tmpY != marker.y){
 		marker.x = tmpX;
@@ -160,10 +160,10 @@ function update(){
 
 function tunel(object)
 {
-	if(object.x >= (Utils.TILE_SIZE*28+14))
-		object.x = -1 * Utils.TILE_SIZE;
-	else if(object.x <= -1 * Utils.TILE_SIZE)
-		object.x = (28*Utils.TILE_SIZE);
+	if(object.x >= (Utils.TileToPixels(28)+14))
+		object.x = Utils.TileToPixels(-1);
+	else if(object.x <= Utils.TileToPixels(-1))
+		object.x = Utils.TileToPixels(28);
 };
 
 function updateTarget(player, callback)
@@ -254,10 +254,10 @@ function decideGhostDirection()
 	directions[Utils.Down] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
 	directions[Utils.Right] = map.getTileRight(mapLayer.index, marker.x, marker.y);
 	
-	blinky.x = marker.x*Utils.TILE_SIZE;
-	blinky.y = marker.y*Utils.TILE_SIZE;
+	blinky.x = Utils.TileToPixels(marker.x);
+	blinky.y = Utils.TileToPixels(marker.y);
 	
-	blinky.body.reset(marker.x*Utils.TILE_SIZE,marker.y*Utils.TILE_SIZE);
+	blinky.body.reset(Utils.TileToPixels(marker.x),Utils.TileToPixels(marker.x));
 	
 	var length = directions.length;
 	
