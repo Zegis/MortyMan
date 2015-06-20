@@ -47,8 +47,7 @@ function create(){
 	directions = [null, null, null, null];
 	distance = [null, null, null, null];
 	
-	blinky.body.velocity.x = 93;
-	blinky.direction = Utils.Left;
+	blinky.move(Utils.Right);
 	
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
@@ -213,28 +212,8 @@ function ghostCollide(ghost, tile)
 	for( var i = Utils.Up; i < length;)
 	{
 		if(i !== ghost.direction && directions[i].index === 1)
-		{
-			if(i === Utils.Up)
-			{
-				ghost.body.velocity.y = -93;
-				ghost.direction = Utils.Down;
-			}
-			else if(i === Utils.Left)
-			{
-				ghost.body.velocity.x = -93;
-				ghost.direction = Utils.Right;
-			}
-			else if(i === Utils.Down)
-			{
-				ghost.body.velocity.y = 93;
-				ghost.direction = Utils.Up;
-			}
-			else if(i === Utils.Right)
-			{
-				ghost.body.velocity.x = 93;
-				ghost.direction = Utils.Left;
-			}
-				
+		{			
+			ghost.move(i);
 			break;
 		}
 		else
@@ -275,29 +254,7 @@ function decideGhostDirection()
 	
 	if(smallest != blinky.direction && directions[smallest].index === 1)
 	{
-		if(smallest === Utils.Up)
-		{
-			blinky.body.velocity.x = 0;
-			blinky.body.velocity.y = -93;
-			blinky.direction = Utils.Down;
-		}
-		else if(smallest === Utils.Left)
-		{
-			blinky.body.velocity.x = -93;
-			blinky.body.velocity.y = 0;
-			blinky.direction = Utils.Right;
-		}
-		else if(smallest === Utils.Down)
-		{
-			blinky.body.velocity.y = 93;
-			blinky.body.velocity.x = 0;
-			blinky.direction = Utils.Up;
-		}
-		else if(smallest === Utils.Right)
-		{
-			blinky.body.velocity.y = 0;
-			blinky.body.velocity.x = 93;
-			blinky.direction = Utils.Left;
-		}
+		blinky.stop();
+		blinky.move(smallest);
 	}
 }
