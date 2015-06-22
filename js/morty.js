@@ -102,7 +102,7 @@ function update(){
 		marker.y = blinky.marker.y;
 		if(Utils.arrayContains(decisionPoints,marker)) // if in decision point
 		{
-			blinky.updateTarget(player,directions,map);
+			blinky.updateTarget(player,map);
 		}
 	}
 

@@ -13,6 +13,9 @@ function Ghost(game, x, y, image){
 	this.marker = new Phaser.Point(x,y);
 	this.target = new Phaser.Point(0,0);
 	
+	this.directions = [null, null, null, null]
+	this.distance = [null, null, null, null];
+	
 	game.add.existing(this);
 };
 
@@ -73,46 +76,52 @@ Ghost.prototype.PositionChanged = function(){
 
 };
 
-Ghost.prototype.updateTarget = function(player, directions, map)
+Ghost.prototype.updateTarget = function(player, map)
 {
 	this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	
-	this.decideDirection(directions,map);
+	this.decideDirection(map);
 };
 
-Ghost.prototype.decideDirection = function(directions,map){
+Ghost.prototype.decideDirection = function(map){
 
-	directions[Utils.Up] = map.getTileAbove(map.getLayer(), this.marker.x, this.marker.y);
-	directions[Utils.Left] = map.getTileLeft(map.getLayer(), this.marker.x, this.marker.y);
-	directions[Utils.Down] = map.getTileBelow(map.getLayer(), this.marker.x, this.marker.y);
-	directions[Utils.Right] = map.getTileRight(map.getLayer(), this.marker.x, this.marker.y);
+	this.updateDirections(map);
 	
 	this.x = Utils.TileToPixels(this.marker.x);
 	this.y = Utils.TileToPixels(this.marker.y);
 	
 	this.body.reset(Utils.TileToPixels(marker.x),Utils.TileToPixels(marker.x));
 	
-	var length = directions.length;
+	var length = this.directions.length;
 	
 	for(var i= 0; i < length; i++)
 	{	
-		if(directions[i].index === 1 && i !== this.direction)
-			distance[i] = Phaser.Point.distance(this.target,directions[i]);
+		if(this.directions[i].index === 1 && i !== this.direction)
+			this.distance[i] = Phaser.Point.distance(this.target,this.directions[i]);
 		else
-			distance[i] = 2000;
+			this.distance[i] = 2000;
 	}
 	
 	var smallest = 0;
 	for(i=1; i < length; i++)
 	{
-		if(distance[smallest] > distance[i])
+		if(this.distance[smallest] > this.distance[i])
 			smallest = i;
 	}
 	
-	if(smallest != this.direction && directions[smallest].index === 1)
+	if(smallest != this.direction && this.directions[smallest].index === 1)
 	{
 		this.stop();
 		this.move(smallest);
 	}
+};
+
+Ghost.prototype.updateDirections = function(map){
+
+	this.directions[Utils.Up] = map.getTileAbove(map.getLayer(), this.marker.x, this.marker.y);
+	this.directions[Utils.Left] = map.getTileLeft(map.getLayer(), this.marker.x, this.marker.y);
+	this.directions[Utils.Down] = map.getTileBelow(map.getLayer(), this.marker.x, this.marker.y);
+	this.directions[Utils.Right] = map.getTileRight(map.getLayer(), this.marker.x, this.marker.y);
+
 };
