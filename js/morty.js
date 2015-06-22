@@ -11,9 +11,6 @@ var blinky;
 var isSuper;
 var superTimer;
 
-var marker;
-var directions;
-
 var decisionPoints;
 
 function preload(){
@@ -40,9 +37,6 @@ function create(){
 	
 	isSuper = false;
 	superTimer = game.time.create(false);
-	
-	marker = new Phaser.Point(1,2);
-	directions = [null, null, null, null];
 		
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
@@ -97,14 +91,9 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	
-	if(blinky.PositionChanged()){
-		marker.x = blinky.marker.x;
-		marker.y = blinky.marker.y;
-		if(Utils.arrayContains(decisionPoints,marker)) // if in decision point
-		{
-			blinky.updateTarget(player,map);
-		}
-	}
+	if(blinky.PositionChanged())
+		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
+			blinky.makeDecision(player,map);
 
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	

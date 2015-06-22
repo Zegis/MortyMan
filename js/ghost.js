@@ -76,12 +76,16 @@ Ghost.prototype.PositionChanged = function(){
 
 };
 
-Ghost.prototype.updateTarget = function(player, map)
+Ghost.prototype.makeDecision = function(player, map)
+{
+	this.updateTarget(player);
+	this.decideDirection(map);
+}
+
+Ghost.prototype.updateTarget = function(player)
 {
 	this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
-	
-	this.decideDirection(map);
 };
 
 Ghost.prototype.decideDirection = function(map){
@@ -91,7 +95,7 @@ Ghost.prototype.decideDirection = function(map){
 	this.x = Utils.TileToPixels(this.marker.x);
 	this.y = Utils.TileToPixels(this.marker.y);
 	
-	this.body.reset(Utils.TileToPixels(marker.x),Utils.TileToPixels(marker.x));
+	this.body.reset(Utils.TileToPixels(this.marker.x),Utils.TileToPixels(this.marker.x));
 	
 	var length = this.directions.length;
 	
