@@ -13,10 +13,8 @@ var superTimer;
 
 var marker;
 var directions;
-var distance;
 
 var decisionPoints;
-var target;
 
 function preload(){
 	game.load.image("tilemap","assets/tilemap.png");
@@ -43,10 +41,8 @@ function create(){
 	isSuper = false;
 	superTimer = game.time.create(false);
 	
-	target = new Phaser.Point(1,29);
 	marker = new Phaser.Point(1,2);
 	directions = [null, null, null, null];
-	distance = [null, null, null, null];
 		
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
