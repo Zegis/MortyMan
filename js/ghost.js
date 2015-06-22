@@ -2,13 +2,16 @@
 /* global Utils */
 
 function Ghost(game, x, y, image){
-	Phaser.Sprite.call(this, game, x, y, image);
+	Phaser.Sprite.call(this, game, Utils.TILE_SIZE * x, Utils.TILE_SIZE * y, image);
 	
 	
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 	this.enableBody = true;
 	this.body.bounce.y = 0;
 	this.body.bounce.x = 0;
+	
+	this.marker = new Phaser.Point(x,y);
+	this.target = new Phaser.Point(0,0);
 	
 	game.add.existing(this);
 };
@@ -43,4 +46,73 @@ Ghost.prototype.move = function(direction){
 Ghost.prototype.stop = function(){
 	this.body.velocity.x = 0;
 	this.body.velocity.y = 0;
+};
+
+Ghost.prototype.PositionChanged = function(){
+
+	var tmpX, tmpY;
+	
+	if(this.body.velocity.x < 0)
+		tmpX = Utils.pixelsToTiles(this.x + this.width);
+	else
+		tmpX = Utils.pixelsToTiles(this.x);
+		
+	if(this.body.velocity.y < 0)
+		tmpY = Utils.pixelsToTiles(this.y + this.height);
+	else
+		tmpY = Utils.pixelsToTiles(this.y);
+		
+	if(tmpX != this.marker.x || tmpY != this.marker.y)
+	{
+		this.marker.x = tmpX;
+		this.marker.y = tmpY;
+		return true;
+	}
+	else
+		return false;
+
+};
+
+Ghost.prototype.updateTarget = function(player, directions, map)
+{
+	this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+	this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+	
+	this.decideDirection(directions,map);
+};
+
+Ghost.prototype.decideDirection = function(directions,map){
+
+	directions[Utils.Up] = map.getTileAbove(map.getLayer(), this.marker.x, this.marker.y);
+	directions[Utils.Left] = map.getTileLeft(map.getLayer(), this.marker.x, this.marker.y);
+	directions[Utils.Down] = map.getTileBelow(map.getLayer(), this.marker.x, this.marker.y);
+	directions[Utils.Right] = map.getTileRight(map.getLayer(), this.marker.x, this.marker.y);
+	
+	this.x = Utils.TileToPixels(this.marker.x);
+	this.y = Utils.TileToPixels(this.marker.y);
+	
+	this.body.reset(Utils.TileToPixels(marker.x),Utils.TileToPixels(marker.x));
+	
+	var length = directions.length;
+	
+	for(var i= 0; i < length; i++)
+	{	
+		if(directions[i].index === 1 && i !== this.direction)
+			distance[i] = Phaser.Point.distance(this.target,directions[i]);
+		else
+			distance[i] = 2000;
+	}
+	
+	var smallest = 0;
+	for(i=1; i < length; i++)
+	{
+		if(distance[smallest] > distance[i])
+			smallest = i;
+	}
+	
+	if(smallest != this.direction && directions[smallest].index === 1)
+	{
+		this.stop();
+		this.move(smallest);
+	}
 };

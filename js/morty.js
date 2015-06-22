@@ -32,7 +32,8 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = new Ghost(game, Utils.TILE_SIZE*1, Utils.TILE_SIZE*2, "blinky");
+	blinky = new Ghost(game, 1, 2, "blinky");
+	blinky.move(Utils.Right);
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -42,13 +43,11 @@ function create(){
 	isSuper = false;
 	superTimer = game.time.create(false);
 	
-	marker = new Phaser.Point(0,0);
 	target = new Phaser.Point(1,29);
+	marker = new Phaser.Point(1,2);
 	directions = [null, null, null, null];
 	distance = [null, null, null, null];
-	
-	blinky.move(Utils.Right);
-	
+		
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
 	new Phaser.Point(15,5),new Phaser.Point(18,5),new Phaser.Point(21,5),new Phaser.Point(26,5),
@@ -102,27 +101,12 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	
-	var	tmpX ;
-	var	tmpY;
-	
-	if(blinky.body.velocity.x < 0)
-		tmpX = Utils.pixelsToTiles(blinky.x + blinky.width);
-	else
-		tmpX = Utils.pixelsToTiles(blinky.x);
-		
-	if(blinky.body.velocity.y < 0)
-	{
-		tmpY  = Utils.pixelsToTiles(blinky.y + blinky.height);
-	}
-	else
-		tmpY  = Utils.pixelsToTiles(blinky.y);
-	
-	if(tmpX != marker.x || tmpY != marker.y){
-		marker.x = tmpX;
-		marker.y = tmpY;
+	if(blinky.PositionChanged()){
+		marker.x = blinky.marker.x;
+		marker.y = blinky.marker.y;
 		if(Utils.arrayContains(decisionPoints,marker)) // if in decision point
 		{
-			updateTarget(player,decideGhostDirection);
+			blinky.updateTarget(player,directions,map);
 		}
 	}
 
@@ -162,14 +146,6 @@ function tunel(object)
 		object.x = Utils.TileToPixels(28);
 };
 
-function updateTarget(player, callback)
-{
-	target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
-	target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
-	
-	callback();
-};
-
 function updateScore(player,pill){
 	pill.kill();
 	score += 10;
@@ -199,8 +175,7 @@ function touchGhost(player, ghost){
 		player.kill();
 }
 
-function ghostCollide(ghost, tile)
-{
+function ghostCollide(ghost, tile){
 	
 	directions[Utils.Up] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
 	directions[Utils.Left] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
@@ -220,41 +195,5 @@ function ghostCollide(ghost, tile)
 		{
 			++i;
 		}
-	}
-}
-
-function decideGhostDirection()
-{
-	directions[Utils.Up] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[Utils.Left] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[Utils.Down] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	directions[Utils.Right] = map.getTileRight(mapLayer.index, marker.x, marker.y);
-	
-	blinky.x = Utils.TileToPixels(marker.x);
-	blinky.y = Utils.TileToPixels(marker.y);
-	
-	blinky.body.reset(Utils.TileToPixels(marker.x),Utils.TileToPixels(marker.x));
-	
-	var length = directions.length;
-	
-	for(var i= 0; i < length; i++)
-	{	
-		if(directions[i].index === 1 && i !== blinky.direction)
-			distance[i] = Phaser.Point.distance(target,directions[i]);
-		else
-			distance[i] = 2000;
-	}
-	
-	var smallest = 0;
-	for(i=1; i < length; i++)
-	{
-		if(distance[smallest] > distance[i])
-			smallest = i;
-	}
-	
-	if(smallest != blinky.direction && directions[smallest].index === 1)
-	{
-		blinky.stop();
-		blinky.move(smallest);
 	}
 }
