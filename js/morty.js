@@ -173,23 +173,6 @@ function touchGhost(player, ghost){
 
 function ghostCollide(ghost, tile){
 	
-	directions[Utils.Up] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[Utils.Left] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[Utils.Down] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	directions[Utils.Right] = map.getTileRight(mapLayer.index, marker.x, marker.y);
-	
-	var length = directions.length;
-	
-	for( var i = Utils.Up; i < length;)
-	{
-		if(i !== ghost.direction && directions[i].index === 1)
-		{			
-			ghost.move(i);
-			break;
-		}
-		else
-		{
-			++i;
-		}
-	}
+	ghost.updateDirections(map);
+	ghost.collide();
 }

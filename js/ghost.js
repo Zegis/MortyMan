@@ -125,3 +125,22 @@ Ghost.prototype.updateDirections = function(map){
 	this.directions[Utils.Right] = map.getTileRight(map.getLayer(), this.marker.x, this.marker.y);
 
 };
+
+Ghost.prototype.collide = function(){
+
+	var length = this.directions.length;
+	
+	for( var i = Utils.Up; i < length;)
+	{
+		if(i !== this.direction && this.directions[i].index === 1)
+		{			
+			this.move(i);
+			break;
+		}
+		else
+		{
+			++i;
+		}
+	}
+
+};
