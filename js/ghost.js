@@ -84,8 +84,15 @@ Ghost.prototype.makeDecision = function(player, map)
 
 Ghost.prototype.updateTarget = function(player)
 {
-	this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
-	this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+	if(this.mode != 0){
+		this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+		this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+	}
+	else{
+		this.target.x = 1;
+		this.target.y = 1;
+	}
+	
 };
 
 Ghost.prototype.decideDirection = function(map){
@@ -147,4 +154,29 @@ Ghost.prototype.collide = function(){
 		}
 	}
 
+};
+
+Ghost.prototype.scare = function(scaredTexture){
+	this.loadTexture(scaredTexture);
+	this.mode = 0;
+	this.reverse();
+};
+
+Ghost.prototype.reverse = function(){
+	this.body. velocity.x *= -1;
+	this.body. velocity.y *= -1;
+	
+	if(this.direction === Utils.Up)
+		this.direction = Utils.Down;
+	else if(this.direction === Utils.Down)
+		this.direction = Utils.Up;
+	else if(this.direction === Utils.Left)
+		this.direction = Utils.Right;
+	else if(this.direction === Utils.Right)
+		this.direction = Utils.Left;
+};
+
+Ghost.prototype.makeNormal = function(normalTexture){
+	this.loadTexture(normalTexture);
+	this.mode = 1;
 };

@@ -142,7 +142,7 @@ function makeSuper(player,pill){
 	{
 	pill.kill();
 	isSuper = true;
-	blinky.loadTexture("scared");
+	blinky.scare("scared");
 	superTimer.add(6000, makeNormal,this);
 	superTimer.start();
 	}
@@ -150,7 +150,7 @@ function makeSuper(player,pill){
 
 function makeNormal(){
 	isSuper = false;
-	blinky.loadTexture("blinky");
+	blinky.makeNormal("blinky");
 }
 
 function touchGhost(player, ghost){
