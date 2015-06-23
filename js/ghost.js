@@ -16,6 +16,8 @@ function Ghost(game, x, y, image){
 	this.directions = [null, null, null, null]
 	this.distance = [null, null, null, null];
 	
+	this.mode = 1;
+	
 	game.add.existing(this);
 };
 
@@ -84,7 +86,7 @@ Ghost.prototype.makeDecision = function(player, map)
 
 Ghost.prototype.updateTarget = function(player)
 {
-	if(this.mode != 0){
+	if(this.mode === 1){
 		this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 		this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	}
@@ -156,10 +158,12 @@ Ghost.prototype.collide = function(){
 
 };
 
-Ghost.prototype.scare = function(scaredTexture){
-	this.loadTexture(scaredTexture);
-	this.mode = 0;
-	this.reverse();
+Ghost.prototype.changeMode = function(mode, texture){
+	if(this.mode != 0)
+		this.reverse();
+	
+	this.mode = mode;
+	this.loadTexture(texture);
 };
 
 Ghost.prototype.reverse = function(){
@@ -174,9 +178,4 @@ Ghost.prototype.reverse = function(){
 		this.direction = Utils.Right;
 	else if(this.direction === Utils.Right)
 		this.direction = Utils.Left;
-};
-
-Ghost.prototype.makeNormal = function(normalTexture){
-	this.loadTexture(normalTexture);
-	this.mode = 1;
 };
