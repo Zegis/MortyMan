@@ -89,8 +89,8 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	}
 	else{
-		this.target.x = 1;
-		this.target.y = 1;
+		this.target.x = Math.random() * (Utils.mapWidth - 1) + 1;
+		this.target.y = Math.random() * (Utils.mapHeight - 1) + 1;
 	}
 	
 };
