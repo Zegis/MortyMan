@@ -140,17 +140,17 @@ function updateScore(player,pill){
 function makeSuper(player,pill){
 	if(isSuper == false)
 	{
-	pill.kill();
-	isSuper = true;
-	blinky.changeMode(0,"scared");
-	superTimer.add(6000, makeNormal,this);
-	superTimer.start();
+		pill.kill();
+		isSuper = true;
+		blinky.changeMode(GhostMode.Scared,"scared");
+		superTimer.add(6000, makeNormal,this);
+		superTimer.start();
 	}
 }
 
 function makeNormal(){
 	isSuper = false;
-	blinky.changeMode(1,"blinky");
+	blinky.changeMode(GhostMode.Chase,"blinky");
 }
 
 function touchGhost(player, ghost){
