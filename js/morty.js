@@ -1,5 +1,7 @@
 /* global Phaser*/
 /* global Utils */
+/*global GhostMode */
+/*global Ghost */
 
 var game = new Phaser.Game(Utils.mapWidth, Utils.mapHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update});
 var map, mapLayer;
@@ -10,6 +12,7 @@ var scoreTxt, score;
 var blinky;
 var isSuper;
 var superTimer;
+var modeChangeTimer;
 
 var decisionPoints;
 
@@ -27,7 +30,7 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = new Ghost(game, 1, 2, "blinky");
+	blinky = new Ghost(game, 1, 2, "blinky",26,0);
 	blinky.move(Utils.Right);
 	
 	// create controls
@@ -37,6 +40,8 @@ function create(){
 	
 	isSuper = false;
 	superTimer = game.time.create(false);
+	modeChangeTimer = game.time.create(false);
+	modeChangeTimer.add(7000,modeChange,this);
 		
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
@@ -48,6 +53,8 @@ function create(){
 	new Phaser.Point(6,23),new Phaser.Point(9,23),new Phaser.Point(18,23),new Phaser.Point(21,23),
 	new Phaser.Point(3,26),new Phaser.Point(24,26),
 	new Phaser.Point(12,29),new Phaser.Point(15,29)];
+	
+	modeChangeTimer.start();
 };
 
 function createMap(){
@@ -83,6 +90,11 @@ function createPlayer(){
 	game.physics.enable(player, Phaser.Physics.ARCADE);
 	
 }
+
+function modeChange(){
+	blinky.changeMode();
+	modeChangeTimer.add(7000,modeChange,this);
+};
 
 function update(){
 
@@ -145,12 +157,15 @@ function makeSuper(player,pill){
 		blinky.changeMode(GhostMode.Scared,"scared");
 		superTimer.add(6000, makeNormal,this);
 		superTimer.start();
+		
+		modeChangeTimer.pause();
 	}
 }
 
 function makeNormal(){
 	isSuper = false;
 	blinky.changeMode(GhostMode.Chase,"blinky");
+	modeChangeTimer.resume();
 }
 
 function touchGhost(player, ghost){

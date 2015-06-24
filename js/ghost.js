@@ -3,7 +3,7 @@
 
 var GhostMode = { Scared : 0, Chase : 1, Scatter : 2 };
 
-function Ghost(game, x, y, image){
+function Ghost(game, x, y, image, targetX, targetY){
 	Phaser.Sprite.call(this, game, Utils.TILE_SIZE * x, Utils.TILE_SIZE * y, image);
 	
 	
@@ -14,6 +14,8 @@ function Ghost(game, x, y, image){
 	
 	this.marker = new Phaser.Point(x,y);
 	this.target = new Phaser.Point(0,0);
+	
+	this.scatterTarget = new Phaser.Point(targetX, targetY);
 	
 	this.directions = [null, null, null, null]
 	this.distance = [null, null, null, null];
@@ -92,6 +94,10 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 		this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
 	}
+	else if(this.mode === GhostMode.Scatter){
+		this.target.x = this.scatterTarget.x;
+		this.target.y = this.scatterTarget.y;
+	}
 	else{
 		this.target.x = Math.random() * (Utils.mapWidth - 1) + 1;
 		this.target.y = Math.random() * (Utils.mapHeight - 1) + 1;
@@ -165,7 +171,17 @@ Ghost.prototype.changeMode = function(mode, texture){
 		this.reverse();
 	
 	this.mode = mode;
-	this.loadTexture(texture);
+	if(!texture)
+		this.loadTexture(texture);
+};
+
+Ghost.prototype.changeMode = function(){
+	if(this.mode === GhostMode.Chase)
+		this.mode = GhostMode.Scatter;
+	else
+		this.mode = GhostMode.Chase;
+		
+	this.reverse();
 };
 
 Ghost.prototype.reverse = function(){
