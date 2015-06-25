@@ -20,7 +20,7 @@ function Ghost(game, x, y, image, targetX, targetY){
 	this.directions = [null, null, null, null]
 	this.distance = [null, null, null, null];
 	
-	this.mode = GhostMode.Chase;
+	this.mode = GhostMode.Scatter;
 	
 	game.add.existing(this);
 };

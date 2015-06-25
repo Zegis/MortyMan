@@ -25,3 +25,5 @@ var Utils = {
 		return tileValue * this.TILE_SIZE;
 	}
 };
+
+var WaveTimes = [7000, 20000, 7000, 20000, 5000, 20000, 5000];

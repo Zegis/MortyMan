@@ -12,6 +12,7 @@ var scoreTxt, score;
 var blinky;
 var superTimer;
 var modeChangeTimer;
+var currentWave;
 
 var decisionPoints;
 
@@ -38,8 +39,9 @@ function create(){
 	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
 	
 	superTimer = game.time.create(false);
+	currentWave = 0;
 	modeChangeTimer = game.time.create(false);
-	modeChangeTimer.add(7000,modeChange,this);
+	modeChangeTimer.add(WaveTimes[currentWave],modeChange,this);
 		
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
@@ -95,7 +97,11 @@ function modeChange(){
 	else
 		blinky.changeMode(GhostMode.Scatter);
 	
-	modeChangeTimer.add(7000,modeChange,this);
+	if(currentWave < WaveTimes.length)
+	{
+		++currentWave;
+		modeChangeTimer.add(WaveTimes[currentWave],modeChange,this);
+	}
 };
 
 function update(){
@@ -135,6 +141,8 @@ function update(){
 		
 	tunel(player);
 	tunel(blinky);
+	
+	game.debug.text(currentWave,20,20,"#CCC");
 };
 
 function tunel(object)
