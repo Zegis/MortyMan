@@ -1,23 +1,22 @@
-var game = new Phaser.Game(28 * 28,31 * 28, Phaser.AUTO, '', { preload: preload, create: create, update: update});
+/* global Phaser*/
+/* global Utils */
+/*global GhostMode */
+/*global Ghost */
+
+var game = new Phaser.Game(Utils.mapWidth, Utils.mapHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update});
 var map, mapLayer;
 var player;
 var controls;
 var scorePills, superPills;
 var scoreTxt, score;
 var blinky;
-var isSuper;
 var superTimer;
-
-var marker;
-var directions;
-var distance;
-var current;
+var modeChangeTimer;
+var currentWave;
 
 var decisionPoints;
-var target;
 
 function preload(){
-
 	game.load.image("tilemap","assets/tilemap.png");
 	game.load.spritesheet("pills","assets/pills.png",28,28);
 	game.load.tilemap("map","map/tmap.json",null,Phaser.Tilemap.TILED_JSON);
@@ -31,29 +30,19 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = game.add.sprite((28*1), (28*2),"blinky");
-//	blinky.anchor.set(0.5);
-	game.physics.enable(blinky, Phaser.Physics.ARCADE);
-	blinky.body.bounce.y = 0;
-	blinky.body.bounce.x = 0;
-	
+	blinky = new Ghost(game, 1, 2, "blinky",26,0);
+	blinky.move(Utils.Right);
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
 	score = 0;
 	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
 	
-	isSuper = false;
 	superTimer = game.time.create(false);
-	
-	marker = new Phaser.Point(0,0);
-	target = new Phaser.Point(1,29);
-	directions = [null, null, null, null, null];
-	distance = [null, null, null, null, null];
-	
-	blinky.body.velocity.x = 93;
-	blinky.direction = 2;
-	
+	currentWave = 0;
+	modeChangeTimer = game.time.create(false);
+	modeChangeTimer.add(WaveTimes[currentWave],modeChange,this);
+		
 	decisionPoints = [ new Phaser.Point(6,1), new Phaser.Point(21,1),
 	new Phaser.Point(1,5),new Phaser.Point(6,5),new Phaser.Point(9,5),new Phaser.Point(12,5),
 	new Phaser.Point(15,5),new Phaser.Point(18,5),new Phaser.Point(21,5),new Phaser.Point(26,5),
@@ -64,6 +53,8 @@ function create(){
 	new Phaser.Point(6,23),new Phaser.Point(9,23),new Phaser.Point(18,23),new Phaser.Point(21,23),
 	new Phaser.Point(3,26),new Phaser.Point(24,26),
 	new Phaser.Point(12,29),new Phaser.Point(15,29)];
+	
+	modeChangeTimer.start();
 };
 
 function createMap(){
@@ -95,10 +86,23 @@ function createMap(){
 
 function createPlayer(){
 	//player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman"); // original start point
-	player = game.add.sprite((28*3) , (28 * 14),"pacman"); // debug start point
+	player = game.add.sprite((Utils.TILE_SIZE*3) , (Utils.TILE_SIZE * 14),"pacman"); // debug start point
 	game.physics.enable(player, Phaser.Physics.ARCADE);
 	
 }
+
+function modeChange(){
+	if(blinky.mode === GhostMode.Scatter)
+		blinky.changeMode(GhostMode.Chase);
+	else
+		blinky.changeMode(GhostMode.Scatter);
+	
+	if(currentWave < WaveTimes.length)
+	{
+		++currentWave;
+		modeChangeTimer.add(WaveTimes[currentWave],modeChange,this);
+	}
+};
 
 function update(){
 
@@ -107,30 +111,9 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	
-	var	tmpX ;
-	var	tmpY;
-	
-	if(blinky.body.velocity.x < 0)
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x + blinky.width),28) / 28;
-	else
-		tmpX = Phaser.Math.snapToFloor(Math.floor(blinky.x),28) / 28;
-		
-	if(blinky.body.velocity.y < 0)
-	{
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y + blinky.height),28) / 28;
-	}
-	else
-		tmpY  = Phaser.Math.snapToFloor(Math.floor(blinky.y),28) / 28;
-	
-	if(tmpX != marker.x || tmpY != marker.y){
-		marker.x = tmpX;
-		marker.y = tmpY;
-		if(decisionPoints.contains(marker)) // if in decision point
-		{
-			updateTarget(player,decideGhostDirection);
-			// decideGhostDirection();
-		}
-	}
+	if(blinky.PositionChanged())
+		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
+			blinky.makeDecision(player,map);
 
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
@@ -139,22 +122,18 @@ function update(){
 	if(controls.left.isDown)
 	{
 		player.body.velocity.x = -93;
-		current = Phaser.LEFT;
 	}
 	else if(controls.right.isDown)
 	{
 		player.body.velocity.x = 93;
-		current = Phaser.RIGHT;
 	}
 	if(controls.down.isDown)
 	{
 		player.body.velocity.y = 93;
-		current = Phaser.DOWN;
 	}
 	else if(controls.up.isDown)
 	{
 		player.body.velocity.y = -93;
-		current = Phaser.UP;
 	}
 	
 	if(scorePills.countDead() == scorePills.length)
@@ -162,22 +141,16 @@ function update(){
 		
 	tunel(player);
 	tunel(blinky);
+	
+	game.debug.text(currentWave,20,20,"#CCC");
 };
 
 function tunel(object)
 {
-	if(object.x >= (28*28+14))
-		object.x = -28;
-	else if(object.x <= -28)
-		object.x = (28*28);
-};
-
-function updateTarget(player, callback)
-{
-	target.x = Phaser.Math.snapToFloor(Math.floor(player.x),28) / 28;
-	target.y = Phaser.Math.snapToFloor(Math.floor(player.y),28) / 28;
-	
-	callback();
+	if(object.x >= (Utils.TileToPixels(28)+14))
+		object.x = Utils.TileToPixels(-1);
+	else if(object.x <= Utils.TileToPixels(-1))
+		object.x = Utils.TileToPixels(28);
 };
 
 function updateScore(player,pill){
@@ -187,132 +160,28 @@ function updateScore(player,pill){
 };
 
 function makeSuper(player,pill){
-	if(isSuper == false)
-	{
-	pill.kill();
-	isSuper = true;
-	blinky.loadTexture("scared");
-	superTimer.add(6000, makeNormal,this);
-	superTimer.start();
-	}
+		pill.kill();
+		blinky.changeMode(GhostMode.Scared,"scared");
+		superTimer.add(6000, makeNormal,this);
+		superTimer.start();
+		
+		modeChangeTimer.pause();
 }
 
 function makeNormal(){
-	isSuper = false;
-	blinky.loadTexture("blinky");
+	blinky.changeMode(GhostMode.Chase,"blinky");
+	modeChangeTimer.resume();
 }
 
 function touchGhost(player, ghost){
-	if(isSuper)
+	if(ghost.mode === GhostMode.Scared)
 		ghost.kill();
 	else
 		player.kill();
 }
 
-function ghostCollide(ghost, tile)
-{
+function ghostCollide(ghost, tile){
 	
-	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
-	
-	for( var i = 1; i < 5;)
-	{
-		if(i !== ghost.direction && directions[i].index === 1)
-		{
-			if(i === 1)
-			{
-				ghost.body.velocity.y = -93;
-				ghost.direction = 3;
-			}
-			else if(i === 2)
-			{
-				ghost.direction = 4;
-				ghost.body.velocity.x = -93;
-			}
-			else if(i === 3)
-			{
-				ghost.direction = 1;
-				ghost.body.velocity.y = 93;
-			}
-			else if(i === 4)
-			{
-				ghost.direction = 2;
-				ghost.body.velocity.x = 93;
-			}
-				
-			break;
-		}
-		else
-		{
-			++i;
-		}
-	}
+	ghost.updateDirections(map);
+	ghost.collide();
 }
-
-function decideGhostDirection()
-{
-	directions[1] = map.getTileAbove(mapLayer.index, marker.x, marker.y);
-	directions[2] = map.getTileLeft(mapLayer.index, marker.x, marker.y);
-	directions[3] = map.getTileBelow(mapLayer.index, marker.x, marker.y);
-	directions[4] = map.getTileRight(mapLayer.index, marker.x, marker.y);
-	
-	blinky.x = marker.x*28;
-	blinky.y = marker.y*28;
-	
-	blinky.body.reset(marker.x*28,marker.y*28);
-	
-	for(var i=1; i<5; i++)
-	{	
-		if(directions[i].index === 1 && i !== blinky.direction)
-			distance[i] = Phaser.Point.distance(target,directions[i]);
-		else
-			distance[i] = 2000;
-	}
-	
-	var smallest = 1;
-	for(i=2; i<5; i++)
-	{
-		if(distance[smallest] > distance[i])
-			smallest = i;
-	}
-	
-	if(smallest != blinky.direction && directions[smallest].index === 1)
-	{
-		if(smallest === 1)
-		{
-			blinky.body.velocity.x = 0;
-			blinky.body.velocity.y = -93;
-			blinky.direction = 3;
-		}
-		else if(smallest === 2)
-		{
-			blinky.direction = 4;
-			blinky.body.velocity.x = -93;
-			blinky.body.velocity.y = 0;
-		}
-		else if(smallest === 3)
-		{
-			blinky.direction = 1;
-			blinky.body.velocity.y = 93;
-			blinky.body.velocity.x = 0;
-		}
-		else if(smallest === 4)
-		{
-			blinky.direction = 2;
-			blinky.body.velocity.y = 0;
-			blinky.body.velocity.x = 93;
-		}
-	}
-}
-
-Array.prototype.contains = function(obj){
-	var i = this.length;
-	while(i--)
-	{
-		if(Phaser.Point.equals(obj,this[i]))
-			return true;
-	}
-	return false;
-};
