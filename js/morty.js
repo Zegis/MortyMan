@@ -10,7 +10,6 @@ var controls;
 var scorePills, superPills;
 var scoreTxt, score;
 var blinky;
-var isSuper;
 var superTimer;
 var modeChangeTimer;
 
@@ -38,7 +37,6 @@ function create(){
 	score = 0;
 	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
 	
-	isSuper = false;
 	superTimer = game.time.create(false);
 	modeChangeTimer = game.time.create(false);
 	modeChangeTimer.add(7000,modeChange,this);
@@ -92,7 +90,11 @@ function createPlayer(){
 }
 
 function modeChange(){
-	blinky.changeMode();
+	if(blinky.mode === GhostMode.Scatter)
+		blinky.changeMode(GhostMode.Chase);
+	else
+		blinky.changeMode(GhostMode.Scatter);
+	
 	modeChangeTimer.add(7000,modeChange,this);
 };
 
@@ -150,26 +152,21 @@ function updateScore(player,pill){
 };
 
 function makeSuper(player,pill){
-	if(isSuper == false)
-	{
 		pill.kill();
-		isSuper = true;
 		blinky.changeMode(GhostMode.Scared,"scared");
 		superTimer.add(6000, makeNormal,this);
 		superTimer.start();
 		
 		modeChangeTimer.pause();
-	}
 }
 
 function makeNormal(){
-	isSuper = false;
 	blinky.changeMode(GhostMode.Chase,"blinky");
 	modeChangeTimer.resume();
 }
 
 function touchGhost(player, ghost){
-	if(isSuper)
+	if(ghost.mode === GhostMode.Scared)
 		ghost.kill();
 	else
 		player.kill();

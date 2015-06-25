@@ -1,7 +1,7 @@
 /* global phaser */
 /* global Utils */
 
-var GhostMode = { Scared : 0, Chase : 1, Scatter : 2 };
+var GhostMode = { Scared : 0, Chase : 1, Scatter : 2, Killed : 3 };
 
 function Ghost(game, x, y, image, targetX, targetY){
 	Phaser.Sprite.call(this, game, Utils.TILE_SIZE * x, Utils.TILE_SIZE * y, image);
@@ -166,22 +166,13 @@ Ghost.prototype.collide = function(){
 
 };
 
-Ghost.prototype.changeMode = function(mode, texture){
+Ghost.prototype.changeMode = function(newMode, texture){
 	if(this.mode != GhostMode.Scared)
 		this.reverse();
 	
-	this.mode = mode;
-	if(!texture)
+	this.mode = newMode;
+	if(texture)
 		this.loadTexture(texture);
-};
-
-Ghost.prototype.changeMode = function(){
-	if(this.mode === GhostMode.Chase)
-		this.mode = GhostMode.Scatter;
-	else
-		this.mode = GhostMode.Chase;
-		
-	this.reverse();
 };
 
 Ghost.prototype.reverse = function(){
