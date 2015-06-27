@@ -21,7 +21,7 @@ function Ghost(game, x, y, image, targetX, targetY){
 	this.distance = [null, null, null, null];
 	
 	this.mode = GhostMode.Scatter;
-	this.lasMode = GhostMode.Scatter;
+	this.modeBeforeScared = GhostMode.Scatter;
 	
 	game.add.existing(this);
 };
@@ -172,10 +172,10 @@ Ghost.prototype.changeMode = function(newMode, texture){
 		this.reverse();
 	
 	if(newMode === GhostMode.Scared)
-		this.lastMode = this.mode;
+		this.modeBeforeScared = this.mode;
 	
 	if(newMode === GhostMode.BackToNormal)
-		this.mode = this.lastMode;
+		this.mode = this.modeBeforeScared;
 	else
 		this.mode = newMode;
 	
