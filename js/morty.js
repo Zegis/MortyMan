@@ -169,15 +169,18 @@ function makeSuper(player,pill){
 }
 
 function makeNormal(){
-	blinky.changeMode(GhostMode.Chase,"blinky");
+	blinky.changeMode(GhostMode.BackToNormal,"blinky");
 	modeChangeTimer.resume();
 }
 
 function touchGhost(player, ghost){
-	if(ghost.mode === GhostMode.Scared)
-		ghost.kill();
-	else
-		player.kill();
+	if(ghost.mode !== GhostMode.Killed)
+	{
+		if(ghost.mode === GhostMode.Scared)
+			ghost.kill();
+		else
+			player.kill();
+	}
 }
 
 function ghostCollide(ghost, tile){
