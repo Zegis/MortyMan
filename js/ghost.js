@@ -109,7 +109,6 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.x = this.respawnTarget.x;
 		this.target.y = this.respawnTarget.y;
 	}
-	
 };
 
 Ghost.prototype.decideDirection = function(map){
@@ -174,7 +173,7 @@ Ghost.prototype.collide = function(){
 };
 
 Ghost.prototype.changeMode = function(newMode, texture){
-	// if(this.mode != GhostMode.Scared)
+	// if(this.mode != GhostMode.scared)
 		// this.reverse();
 	
 	if(newMode === GhostMode.Scared)
@@ -202,4 +201,18 @@ Ghost.prototype.reverse = function(){
 		this.direction = Utils.Right;
 	else if(this.direction === Utils.Right)
 		this.direction = Utils.Left;
+};
+
+Ghost.prototype.utilizeSpecialPoint = function(){
+	console.log(this.marker, this.respawnTarget);
+	if(this.mode === GhostMode.Killed && Phaser.Point.equals(this.marker,this.respawnTarget))
+	{
+		console.log(this.marker.x, this.respawnTarget.x)
+		this.respawn();
+	}
+};
+
+Ghost.prototype.respawn = function(){
+	this.loadTexture("blinky");
+	this.mode = GhostMode.Chase;
 };

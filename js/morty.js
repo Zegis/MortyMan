@@ -15,6 +15,7 @@ var modeChangeTimer;
 var currentWave;
 
 var decisionPoints;
+var specialPoints;
 
 function preload(){
 	game.load.image("tilemap","assets/tilemap.png");
@@ -54,6 +55,8 @@ function create(){
 	new Phaser.Point(6,23),new Phaser.Point(9,23),new Phaser.Point(18,23),new Phaser.Point(21,23),
 	new Phaser.Point(3,26),new Phaser.Point(24,26),
 	new Phaser.Point(12,29),new Phaser.Point(15,29)];
+	
+	specialPoints = [new Phaser.Point(13,11)];
 	
 	modeChangeTimer.start();
 };
@@ -114,10 +117,12 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	
-	if(blinky.PositionChanged())
+	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
 			blinky.makeDecision(player,map);
-
+		else if(Utils.arrayContains(specialPoints, blinky.marker))
+			blinky.utilizeSpecialPoint();
+	}
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
 	
