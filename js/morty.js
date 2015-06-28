@@ -93,11 +93,13 @@ function createPlayer(){
 }
 
 function modeChange(){
-	if(blinky.mode === GhostMode.Scatter)
-		blinky.changeMode(GhostMode.Chase);
-	else
-		blinky.changeMode(GhostMode.Scatter);
-	
+	if(blinky.mode !== GhostMode.Killed)
+	{
+		if(blinky.mode === GhostMode.Scatter)
+			blinky.changeMode(GhostMode.Chase);
+		else
+			blinky.changeMode(GhostMode.Scatter);
+	}
 	if(currentWave < WaveTimes.length)
 	{
 		++currentWave;
@@ -170,7 +172,8 @@ function makeSuper(player,pill){
 }
 
 function makeNormal(){
-	blinky.changeMode(GhostMode.BackToNormal,"blinky");
+	if(blinky.mode !== GhostMode.Killed)
+		blinky.changeMode(GhostMode.BackToNormal,"blinky");
 	modeChangeTimer.resume();
 }
 
