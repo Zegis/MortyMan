@@ -23,6 +23,7 @@ function preload(){
 	game.load.image("pacman","assets/pacman.png");
 	game.load.image("blinky","assets/red_ghost.png");
 	game.load.image("scared","assets/frighten_ghost.png");
+	game.load.image("killed","assets/killed_ghost.png");
 };
 
 function create(){
