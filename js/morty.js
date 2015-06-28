@@ -178,7 +178,7 @@ function touchGhost(player, ghost){
 	if(ghost.mode !== GhostMode.Killed)
 	{
 		if(ghost.mode === GhostMode.Scared)
-			ghost.kill();
+			ghost.changeMode(GhostMode.Killed,"killed");
 		else
 			player.kill();
 	}

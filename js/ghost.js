@@ -29,6 +29,8 @@ function Ghost(game, x, y, image, targetX, targetY){
 Ghost.prototype = Object.create(Phaser.Sprite.prototype);
 Ghost.prototype.constructor = Ghost;
 
+Ghost.prototype.respawnTarget = new Phaser.Point(13,11);
+
 Ghost.prototype.move = function(direction){
 	if(direction === Utils.Up)
 	{
@@ -99,9 +101,13 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.x = this.scatterTarget.x;
 		this.target.y = this.scatterTarget.y;
 	}
-	else{
+	else if(this.mode === GhostMode.Scared){
 		this.target.x = Math.random() * (Utils.mapWidth - 1) + 1;
 		this.target.y = Math.random() * (Utils.mapHeight - 1) + 1;
+	}
+	else{
+		this.target.x = this.respawnTarget.x;
+		this.target.y = this.respawnTarget.y;
 	}
 	
 };
@@ -168,8 +174,8 @@ Ghost.prototype.collide = function(){
 };
 
 Ghost.prototype.changeMode = function(newMode, texture){
-	if(this.mode != GhostMode.Scared)
-		this.reverse();
+	// if(this.mode != GhostMode.Scared)
+		// this.reverse();
 	
 	if(newMode === GhostMode.Scared)
 		this.modeBeforeScared = this.mode;
@@ -178,7 +184,6 @@ Ghost.prototype.changeMode = function(newMode, texture){
 		this.mode = this.modeBeforeScared;
 	else
 		this.mode = newMode;
-	
 	
 	
 	if(texture)
