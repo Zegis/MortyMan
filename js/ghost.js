@@ -55,11 +55,6 @@ Ghost.prototype.move = function(direction){
 	}
 };
 
-Ghost.prototype.stop = function(){
-	this.body.velocity.x = 0;
-	this.body.velocity.y = 0;
-};
-
 Ghost.prototype.PositionChanged = function(){
 
 	var tmpX, tmpY;
@@ -138,10 +133,7 @@ Ghost.prototype.decideDirection = function(map){
 	}
 	
 	if(smallest != this.direction && this.directions[smallest].index === 1)
-	{
-		this.stop();
 		this.move(smallest);
-	}
 };
 
 Ghost.prototype.updateDirections = function(map){
@@ -218,7 +210,6 @@ Ghost.prototype.utilizeSpecialPoint = function(map){
 			this.makeDecision(null,map);
 		else
 		{
-			this.stop();
 			if(this.direction === Utils.Left)
 				this.move(Utils.Right);
 			else
