@@ -203,12 +203,27 @@ Ghost.prototype.reverse = function(){
 		this.direction = Utils.Left;
 };
 
-Ghost.prototype.utilizeSpecialPoint = function(){
-	console.log(this.marker, this.respawnTarget);
+Ghost.prototype.utilizeSpecialPoint = function(map){
 	if(this.mode === GhostMode.Killed && Phaser.Point.equals(this.marker,this.respawnTarget))
 	{
-		console.log(this.marker.x, this.respawnTarget.x)
 		this.respawn();
+	}
+	else if(this.marker.y === 11 && (this.marker.x === 12))
+	{
+		this.x = Utils.TileToPixels(this.marker.x);
+		this.y = Utils.TileToPixels(this.marker.y);		
+		this.body.reset(Utils.TileToPixels(this.marker.x),Utils.TileToPixels(this.marker.x));
+		
+		if(this.mode === GhostMode.Scared)
+			this.makeDecision(null,map);
+		else
+		{
+			this.stop();
+			if(this.direction === Utils.Left)
+				this.move(Utils.Right);
+			else
+				this.move(Utils.Left);
+		}
 	}
 };
 

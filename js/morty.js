@@ -56,7 +56,7 @@ function create(){
 	new Phaser.Point(3,26),new Phaser.Point(24,26),
 	new Phaser.Point(12,29),new Phaser.Point(15,29)];
 	
-	specialPoints = [new Phaser.Point(13,11)];
+	specialPoints = [new Phaser.Point(13,11),new Phaser.Point(12,11)];
 	
 	modeChangeTimer.start();
 };
@@ -90,7 +90,7 @@ function createMap(){
 
 function createPlayer(){
 	//player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman"); // original start point
-	player = game.add.sprite((Utils.TILE_SIZE*3) , (Utils.TILE_SIZE * 14),"pacman"); // debug start point
+	player = game.add.sprite((Utils.TILE_SIZE*9) , (Utils.TILE_SIZE * 8),"pacman"); // debug start point
 	game.physics.enable(player, Phaser.Physics.ARCADE);
 	
 }
@@ -120,8 +120,8 @@ function update(){
 	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
 			blinky.makeDecision(player,map);
-		else if(Utils.arrayContains(specialPoints, blinky.marker))
-			blinky.utilizeSpecialPoint();
+		else if(Utils.arrayContains(specialPoints,blinky.marker))
+			blinky.utilizeSpecialPoint(map);
 	}
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
