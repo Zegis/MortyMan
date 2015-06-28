@@ -15,6 +15,7 @@ var modeChangeTimer;
 var currentWave;
 
 var decisionPoints;
+var specialPoints;
 
 function preload(){
 	game.load.image("tilemap","assets/tilemap.png");
@@ -23,6 +24,7 @@ function preload(){
 	game.load.image("pacman","assets/pacman.png");
 	game.load.image("blinky","assets/red_ghost.png");
 	game.load.image("scared","assets/frighten_ghost.png");
+	game.load.image("killed","assets/killed_ghost.png");
 };
 
 function create(){
@@ -53,6 +55,8 @@ function create(){
 	new Phaser.Point(6,23),new Phaser.Point(9,23),new Phaser.Point(18,23),new Phaser.Point(21,23),
 	new Phaser.Point(3,26),new Phaser.Point(24,26),
 	new Phaser.Point(12,29),new Phaser.Point(15,29)];
+	
+	specialPoints = [new Phaser.Point(13,11),new Phaser.Point(12,11)];
 	
 	modeChangeTimer.start();
 };
@@ -86,17 +90,19 @@ function createMap(){
 
 function createPlayer(){
 	//player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman"); // original start point
-	player = game.add.sprite((Utils.TILE_SIZE*3) , (Utils.TILE_SIZE * 14),"pacman"); // debug start point
+	player = game.add.sprite((Utils.TILE_SIZE*9) , (Utils.TILE_SIZE * 8),"pacman"); // debug start point
 	game.physics.enable(player, Phaser.Physics.ARCADE);
 	
 }
 
 function modeChange(){
-	if(blinky.mode === GhostMode.Scatter)
-		blinky.changeMode(GhostMode.Chase);
-	else
-		blinky.changeMode(GhostMode.Scatter);
-	
+	if(blinky.mode !== GhostMode.Killed)
+	{
+		if(blinky.mode === GhostMode.Scatter)
+			blinky.changeMode(GhostMode.Chase);
+		else
+			blinky.changeMode(GhostMode.Scatter);
+	}
 	if(currentWave < WaveTimes.length)
 	{
 		++currentWave;
@@ -111,10 +117,12 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	
-	if(blinky.PositionChanged())
+	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
 			blinky.makeDecision(player,map);
-
+		else if(Utils.arrayContains(specialPoints,blinky.marker))
+			blinky.utilizeSpecialPoint(map);
+	}
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
 	
@@ -169,15 +177,19 @@ function makeSuper(player,pill){
 }
 
 function makeNormal(){
-	blinky.changeMode(GhostMode.Chase,"blinky");
+	if(blinky.mode !== GhostMode.Killed)
+		blinky.changeMode(GhostMode.BackToNormal,"blinky");
 	modeChangeTimer.resume();
 }
 
 function touchGhost(player, ghost){
-	if(ghost.mode === GhostMode.Scared)
-		ghost.kill();
-	else
-		player.kill();
+	if(ghost.mode !== GhostMode.Killed)
+	{
+		if(ghost.mode === GhostMode.Scared)
+			ghost.changeMode(GhostMode.Killed,"killed");
+		else
+			player.kill();
+	}
 }
 
 function ghostCollide(ghost, tile){

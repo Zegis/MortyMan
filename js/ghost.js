@@ -1,7 +1,7 @@
 /* global phaser */
 /* global Utils */
 
-var GhostMode = { Scared : 0, Chase : 1, Scatter : 2, Killed : 3 };
+var GhostMode = { Scared : 0, Chase : 1, Scatter : 2, Killed : 3, BackToNormal : 9 };
 
 function Ghost(game, x, y, image, targetX, targetY){
 	Phaser.Sprite.call(this, game, Utils.TILE_SIZE * x, Utils.TILE_SIZE * y, image);
@@ -21,12 +21,15 @@ function Ghost(game, x, y, image, targetX, targetY){
 	this.distance = [null, null, null, null];
 	
 	this.mode = GhostMode.Scatter;
+	this.modeBeforeScared = GhostMode.Scatter;
 	
 	game.add.existing(this);
 };
 
 Ghost.prototype = Object.create(Phaser.Sprite.prototype);
 Ghost.prototype.constructor = Ghost;
+
+Ghost.prototype.respawnTarget = new Phaser.Point(13,11);
 
 Ghost.prototype.move = function(direction){
 	if(direction === Utils.Up)
@@ -50,11 +53,6 @@ Ghost.prototype.move = function(direction){
 		this.body.velocity.x = 93;
 		this.direction = Utils.Left;
 	}
-};
-
-Ghost.prototype.stop = function(){
-	this.body.velocity.x = 0;
-	this.body.velocity.y = 0;
 };
 
 Ghost.prototype.PositionChanged = function(){
@@ -98,11 +96,14 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.x = this.scatterTarget.x;
 		this.target.y = this.scatterTarget.y;
 	}
-	else{
+	else if(this.mode === GhostMode.Scared){
 		this.target.x = Math.random() * (Utils.mapWidth - 1) + 1;
 		this.target.y = Math.random() * (Utils.mapHeight - 1) + 1;
 	}
-	
+	else{
+		this.target.x = this.respawnTarget.x;
+		this.target.y = this.respawnTarget.y;
+	}
 };
 
 Ghost.prototype.decideDirection = function(map){
@@ -132,10 +133,7 @@ Ghost.prototype.decideDirection = function(map){
 	}
 	
 	if(smallest != this.direction && this.directions[smallest].index === 1)
-	{
-		this.stop();
 		this.move(smallest);
-	}
 };
 
 Ghost.prototype.updateDirections = function(map){
@@ -167,10 +165,18 @@ Ghost.prototype.collide = function(){
 };
 
 Ghost.prototype.changeMode = function(newMode, texture){
-	if(this.mode != GhostMode.Scared)
-		this.reverse();
+	// if(this.mode != GhostMode.scared)
+		// this.reverse();
 	
-	this.mode = newMode;
+	if(newMode === GhostMode.Scared)
+		this.modeBeforeScared = this.mode;
+	
+	if(newMode === GhostMode.BackToNormal)
+		this.mode = this.modeBeforeScared;
+	else
+		this.mode = newMode;
+	
+	
 	if(texture)
 		this.loadTexture(texture);
 };
@@ -187,4 +193,32 @@ Ghost.prototype.reverse = function(){
 		this.direction = Utils.Right;
 	else if(this.direction === Utils.Right)
 		this.direction = Utils.Left;
+};
+
+Ghost.prototype.utilizeSpecialPoint = function(map){
+	if(this.mode === GhostMode.Killed && Phaser.Point.equals(this.marker,this.respawnTarget))
+	{
+		this.respawn();
+	}
+	else if(this.marker.y === 11 && (this.marker.x === 12))
+	{
+		this.x = Utils.TileToPixels(this.marker.x);
+		this.y = Utils.TileToPixels(this.marker.y);		
+		this.body.reset(Utils.TileToPixels(this.marker.x),Utils.TileToPixels(this.marker.x));
+		
+		if(this.mode === GhostMode.Scared)
+			this.makeDecision(null,map);
+		else
+		{
+			if(this.direction === Utils.Left)
+				this.move(Utils.Right);
+			else
+				this.move(Utils.Left);
+		}
+	}
+};
+
+Ghost.prototype.respawn = function(){
+	this.loadTexture("blinky");
+	this.mode = GhostMode.Chase;
 };
