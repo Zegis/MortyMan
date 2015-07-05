@@ -89,8 +89,8 @@ Ghost.prototype.makeDecision = function(player, map)
 Ghost.prototype.updateTarget = function(player)
 {
 	if(this.mode === GhostMode.Chase){
-		this.target.x = Phaser.Math.snapToFloor(Math.floor(player.x),Utils.TILE_SIZE) / Utils.TILE_SIZE;
-		this.target.y = Phaser.Math.snapToFloor(Math.floor(player.y),Utils.TILE_SIZE) / Utils.TILE_SIZE;
+		this.target.x = Utils.pixelsToTile(player.x);
+		this.target.y = Utils.pixelsToTile(player.y);
 	}
 	else if(this.mode === GhostMode.Scatter){
 		this.target.x = this.scatterTarget.x;
@@ -100,7 +100,7 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.x = Math.random() * (Utils.mapWidth - 1) + 1;
 		this.target.y = Math.random() * (Utils.mapHeight - 1) + 1;
 	}
-	else{
+	else{ // if it's not chasing, or scattering nor scared it's killed
 		this.target.x = this.respawnTarget.x;
 		this.target.y = this.respawnTarget.y;
 	}
@@ -110,10 +110,9 @@ Ghost.prototype.decideDirection = function(map){
 
 	this.updateDirections(map);
 	
-	this.x = Utils.TileToPixels(this.marker.x);
-	this.y = Utils.TileToPixels(this.marker.y);
-	
-	this.body.reset(Utils.TileToPixels(this.marker.x),Utils.TileToPixels(this.marker.x));
+	this.x = Utils.tileToPixels(this.marker.x);
+	this.y = Utils.tileToPixels(this.marker.y);
+	this.body.reset(Utils.tileToPixels(this.marker.x),Utils.tileToPixels(this.marker.x));
 	
 	var length = this.directions.length;
 	
@@ -182,8 +181,8 @@ Ghost.prototype.changeMode = function(newMode, texture){
 };
 
 Ghost.prototype.reverse = function(){
-	this.body. velocity.x *= -1;
-	this.body. velocity.y *= -1;
+	this.body.velocity.x *= -1;
+	this.body.velocity.y *= -1;
 	
 	if(this.direction === Utils.Up)
 		this.direction = Utils.Down;
@@ -202,9 +201,9 @@ Ghost.prototype.utilizeSpecialPoint = function(map){
 	}
 	else if(this.marker.y === 11 && (this.marker.x === 12))
 	{
-		this.x = Utils.TileToPixels(this.marker.x);
-		this.y = Utils.TileToPixels(this.marker.y);		
-		this.body.reset(Utils.TileToPixels(this.marker.x),Utils.TileToPixels(this.marker.x));
+		this.x = Utils.tileToPixels(this.marker.x);
+		this.y = Utils.tileToPixels(this.marker.y);		
+		this.body.reset(Utils.tileToPixels(this.marker.x),Utils.tileToPixels(this.marker.x));
 		
 		if(this.mode === GhostMode.Scared)
 			this.makeDecision(null,map);

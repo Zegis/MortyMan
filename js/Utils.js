@@ -21,7 +21,7 @@ var Utils = {
 		return Phaser.Math.snapToFloor(Math.floor(pixelValue), this.TILE_SIZE) / this.TILE_SIZE;
 	},
 	
-	TileToPixels: function(tileValue){
+	tileToPixels: function(tileValue){
 		return tileValue * this.TILE_SIZE;
 	}
 };

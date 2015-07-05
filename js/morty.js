@@ -155,10 +155,10 @@ function update(){
 
 function tunel(object)
 {
-	if(object.x >= (Utils.TileToPixels(28)+14))
-		object.x = Utils.TileToPixels(-1);
-	else if(object.x <= Utils.TileToPixels(-1))
-		object.x = Utils.TileToPixels(28);
+	if(object.x >= (Utils.tileToPixels(28)+14))
+		object.x = Utils.tileToPixels(-1);
+	else if(object.x <= Utils.tileToPixels(-1))
+		object.x = Utils.tileToPixels(28);
 };
 
 function updateScore(player,pill){
