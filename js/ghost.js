@@ -35,23 +35,23 @@ Ghost.prototype.move = function(direction){
 	if(direction === Utils.Up)
 	{
 		this.body.velocity.y = -93;
-		this.direction = Utils.Down;
+		this.comingFrom = Utils.Down;
 		
 	}
 	else if(direction === Utils.Down)
 	{
 		this.body.velocity.y = 93;
-		this.direction = Utils.Up;
+		this.comingFrom = Utils.Up;
 	}
 	else if(direction === Utils.Left)
 	{
 		this.body.velocity.x = -93;
-		this.direction = Utils.Right;
+		this.comingFrom = Utils.Right;
 	}
 	else if(direction === Utils.Right)
 	{
 		this.body.velocity.x = 93;
-		this.direction = Utils.Left;
+		this.comingFrom = Utils.Left;
 	}
 };
 
@@ -118,7 +118,7 @@ Ghost.prototype.decideDirection = function(map){
 	
 	for(var i= 0; i < length; i++)
 	{	
-		if(this.directions[i].index === 1 && i !== this.direction)
+		if(this.directions[i].index === 1 && i !== this.comingFrom)
 			this.distance[i] = Phaser.Point.distance(this.target,this.directions[i]);
 		else
 			this.distance[i] = 2000;
@@ -131,7 +131,7 @@ Ghost.prototype.decideDirection = function(map){
 			smallest = i;
 	}
 	
-	if(smallest != this.direction && this.directions[smallest].index === 1)
+	if(smallest != this.comingFrom && this.directions[smallest].index === 1)
 		this.move(smallest);
 };
 
@@ -150,7 +150,7 @@ Ghost.prototype.collide = function(){
 	
 	for( var i = Utils.Up; i < length;)
 	{
-		if(i !== this.direction && this.directions[i].index === 1)
+		if(i !== this.comingFrom && this.directions[i].index === 1)
 		{			
 			this.move(i);
 			break;
@@ -184,14 +184,14 @@ Ghost.prototype.reverse = function(){
 	this.body.velocity.x *= -1;
 	this.body.velocity.y *= -1;
 	
-	if(this.direction === Utils.Up)
-		this.direction = Utils.Down;
-	else if(this.direction === Utils.Down)
-		this.direction = Utils.Up;
-	else if(this.direction === Utils.Left)
-		this.direction = Utils.Right;
-	else if(this.direction === Utils.Right)
-		this.direction = Utils.Left;
+	if(this.comingFrom === Utils.Up)
+		this.comingFrom = Utils.Down;
+	else if(this.comingFrom === Utils.Down)
+		this.comingFrom = Utils.Up;
+	else if(this.comingFrom === Utils.Left)
+		this.comingFrom = Utils.Right;
+	else if(this.comingFrom === Utils.Right)
+		this.comingFrom = Utils.Left;
 };
 
 Ghost.prototype.utilizeSpecialPoint = function(map){
@@ -209,7 +209,7 @@ Ghost.prototype.utilizeSpecialPoint = function(map){
 			this.makeDecision(null,map);
 		else
 		{
-			if(this.direction === Utils.Left)
+			if(this.comingFrom === Utils.Left)
 				this.move(Utils.Right);
 			else
 				this.move(Utils.Left);
