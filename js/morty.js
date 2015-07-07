@@ -151,6 +151,7 @@ function update(){
 	tunel(blinky);
 	
 	game.debug.text(currentWave,20,20,"#CCC");
+	scoreTxt.setText("Score: " + score);
 };
 
 function tunel(object)
@@ -164,7 +165,6 @@ function tunel(object)
 function updateScore(player,pill){
 	pill.kill();
 	score += 10;
-	scoreTxt.setText("Score: " + score);
 };
 
 function makeSuper(player,pill){
@@ -186,7 +186,10 @@ function touchGhost(player, ghost){
 	if(ghost.mode !== GhostMode.Killed)
 	{
 		if(ghost.mode === GhostMode.Scared)
+		{
 			ghost.changeMode(GhostMode.Killed,"killed");
+			score += 100;
+		}
 		else
 			player.kill();
 	}
