@@ -89,8 +89,8 @@ Ghost.prototype.makeDecision = function(player, map)
 Ghost.prototype.updateTarget = function(player)
 {
 	if(this.mode === GhostMode.Chase){
-		this.target.x = Utils.pixelsToTile(player.x);
-		this.target.y = Utils.pixelsToTile(player.y);
+		this.target.x = Utils.pixelsToTiles(player.x);
+		this.target.y = Utils.pixelsToTiles(player.y);
 	}
 	else if(this.mode === GhostMode.Scatter){
 		this.target.x = this.scatterTarget.x;
