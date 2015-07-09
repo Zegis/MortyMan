@@ -17,6 +17,9 @@ var currentWave;
 var decisionPoints;
 var specialPoints;
 
+var lives;
+var livesTxt;
+
 function preload(){
 	game.load.image("tilemap","assets/tilemap.png");
 	game.load.spritesheet("pills","assets/pills.png",28,28);
@@ -38,7 +41,9 @@ function create(){
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
 	score = 0;
+	lives = 3;
 	scoreTxt = game.add.text(2,28*11, score, {fill: "#ccc", font: "bold 20px Arial"});
+	livesTxt = game.add.text(28*24,28*11, "Lives: " + lives, {fill: "#ccc", font: "bold 20px Arial"});
 	
 	superTimer = game.time.create(false);
 	currentWave = 0;
@@ -151,7 +156,7 @@ function update(){
 	tunel(blinky);
 	
 	game.debug.text(currentWave,20,20,"#CCC");
-	scoreTxt.setText("Score: " + score);
+	
 };
 
 function tunel(object)
@@ -165,6 +170,7 @@ function tunel(object)
 function updateScore(player,pill){
 	pill.kill();
 	score += 10;
+	scoreTxt.setText("Score: " + score);
 };
 
 function makeSuper(player,pill){
@@ -189,9 +195,23 @@ function touchGhost(player, ghost){
 		{
 			ghost.changeMode(GhostMode.Killed,"killed");
 			score += 100;
+			scoreTxt.setText("Score: " + score);
 		}
 		else
-			player.kill();
+		{
+			lives -= 1;
+			livesTxt.setText("Lives: " + lives);
+			if(lives > 0)
+			{
+				player.x = Utils.tileToPixels(9);
+				player.y = Utils.tileToPixels(8);
+				player.body.reset(Utils.tileToPixels(9),Utils.tileToPixels(8));
+			}
+			else
+			{
+				player.kill();
+			}
+		}
 	}
 }
 
