@@ -24,6 +24,8 @@ function Ghost(game, x, y, image, targetX, targetY){
 	this.modeBeforeScared = GhostMode.Scatter;
 	
 	game.add.existing(this);
+	
+	this.startingTile = new Phaser.Point(x,y);
 };
 
 Ghost.prototype = Object.create(Phaser.Sprite.prototype);
@@ -110,9 +112,7 @@ Ghost.prototype.decideDirection = function(map){
 
 	this.updateDirections(map);
 	
-	this.x = Utils.tileToPixels(this.marker.x);
-	this.y = Utils.tileToPixels(this.marker.y);
-	this.body.reset(Utils.tileToPixels(this.marker.x),Utils.tileToPixels(this.marker.x));
+	this.resetPositionToPoint(this.marker);
 	
 	var length = this.directions.length;
 	
@@ -133,6 +133,16 @@ Ghost.prototype.decideDirection = function(map){
 	
 	if(smallest != this.comingFrom && this.directions[smallest].index === 1)
 		this.move(smallest);
+};
+
+Ghost.prototype.resetPositionToPoint = function(point){
+	this.x = Utils.tileToPixels(point.x);
+	this.y = Utils.tileToPixels(point.y);
+	this.body.reset(Utils.tileToPixels(point.x),Utils.tileToPixels(point.x));
+}
+
+Ghost.prototype.resetPosition = function(){
+	this.resetPositionToPoint(this.startingTile);
 };
 
 Ghost.prototype.updateDirections = function(map){
@@ -200,10 +210,8 @@ Ghost.prototype.utilizeSpecialPoint = function(map){
 		this.respawn();
 	}
 	else if(this.marker.y === 11 && (this.marker.x === 12))
-	{
-		this.x = Utils.tileToPixels(this.marker.x);
-		this.y = Utils.tileToPixels(this.marker.y);		
-		this.body.reset(Utils.tileToPixels(this.marker.x),Utils.tileToPixels(this.marker.x));
+	{		
+		this.resetPositionToPoint(this.marker);
 		
 		if(this.mode === GhostMode.Scared)
 			this.makeDecision(null,map);
