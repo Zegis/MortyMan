@@ -206,12 +206,15 @@ function touchGhost(player, ghost){
 				player.x = Utils.tileToPixels(9);
 				player.y = Utils.tileToPixels(8);
 				player.body.reset(Utils.tileToPixels(9),Utils.tileToPixels(8));
+				
 				blinky.resetPosition();
 				blinky.move(Utils.Left);
 			}
 			else
 			{
 				player.kill();
+				livesTxt.setText("Game over!");
+				livesTxt.reset(Utils.tileToPixels(12), Utils.tileToPixels(14));
 			}
 		}
 	}
