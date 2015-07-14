@@ -150,7 +150,17 @@ function update(){
 	}
 	
 	if(scorePills.countDead() == scorePills.length)
-		alert("Victory!");	
+	{
+		blinky.body.velocity.x = 0;
+		blinky.body.velocity.y = 0;
+		
+		player.body.velocity.x = 0;
+		player.body.velocity.y = 0;
+		
+		livesTxt.setText("Victory!");
+		livesTxt.reset(Utils.tileToPixels(13), Utils.tileToPixels(14));
+		
+	}
 		
 	tunel(player);
 	tunel(blinky);
