@@ -27,6 +27,7 @@ function preload(){
 	game.load.tilemap("map","map/tmap.json",null,Phaser.Tilemap.TILED_JSON);
 	game.load.image("pacman","assets/pacman.png");
 	game.load.image("blinky","assets/red_ghost.png");
+	game.load.image("pinky","assets/pink_ghost.png");
 	game.load.image("scared","assets/frighten_ghost.png");
 	game.load.image("killed","assets/killed_ghost.png");
 };
@@ -39,6 +40,9 @@ function create(){
 	//blinky = new Ghost(game, 1, 2, "blinky",26,0);
 	blinky = new Blinky(game,1,2,"blinky",26,0);
 	blinky.move(Utils.Right);
+	
+	pinky = new Pinky(game,26,2,"pinky",1,0);
+	pinky.move(Utils.Left);
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -99,6 +103,7 @@ function createPlayer(){
 	//player = game.add.sprite((28*13)+16 , (28 * 23)+1,"pacman"); // original start point
 	player = game.add.sprite((Utils.TILE_SIZE*9) , (Utils.TILE_SIZE * 8),"pacman"); // debug start point
 	game.physics.enable(player, Phaser.Physics.ARCADE);
+	player.direction = Utils.NONE;
 	
 }
 
@@ -109,6 +114,13 @@ function modeChange(){
 			blinky.changeMode(GhostMode.Chase);
 		else
 			blinky.changeMode(GhostMode.Scatter);
+	}
+	if(pinky.mode !== GhostMode.Killed)
+	{
+		if(pinky.mode === GhostMode.Scatter)
+			pinky.changeMode(GhostMode.Chase);
+		else
+			pinky.changeMode(GhostMode.Scatter);
 	}
 	if(currentWave < WaveTimes.length)
 	{
@@ -123,6 +135,7 @@ function update(){
 	this.game.physics.arcade.overlap(player,scorePills,updateScore);
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
+	this.game.physics.arcade.overlap(player,pinky, touchGhost);
 	
 	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
@@ -132,29 +145,44 @@ function update(){
 	}
 	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
 	
+	if(pinky.PositionChanged()){
+		if(Utils.arrayContains(decisionPoints,pinky.marker)) // if in decision point
+			pinky.makeDecision(player,null,map);
+		else if(Utils.arrayContains(specialPoints,pinky.marker))
+			pinky.utilizeSpecialPoint(map);
+	}
+	this.game.physics.arcade.collide(pinky,mapLayer, ghostCollide);
+	
 	
 	// check Key
 	if(controls.left.isDown)
 	{
 		player.body.velocity.x = -93;
+		player.direction = Utils.Left;
 	}
 	else if(controls.right.isDown)
 	{
 		player.body.velocity.x = 93;
+		player.direction = Utils.Right;
 	}
 	if(controls.down.isDown)
 	{
 		player.body.velocity.y = 93;
+		player.direction = Utils.Down;
 	}
 	else if(controls.up.isDown)
 	{
 		player.body.velocity.y = -93;
+		player.direction = Utils.Up;
 	}
 	
 	if(scorePills.countDead() == scorePills.length)
 	{
 		blinky.body.velocity.x = 0;
 		blinky.body.velocity.y = 0;
+		
+		pinky.body.velocity.x = 0;
+		pinky.body.velocity.y = 0;
 		
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
@@ -166,8 +194,14 @@ function update(){
 		
 	tunel(player);
 	tunel(blinky);
+	tunel(pinky);
 	
-	game.debug.text(currentWave,20,20,"#CCC");
+	game.debug.text(Utils.pixelsToTiles(player.x) + " " 
+				+ Utils.pixelsToTiles(player.y) + ","
+				+ pinky.target.x + " " 
+				+ pinky.target.y,20,20,"#CCC");
+				
+	game.debug.text(currentWave,20,50,"#CCC");
 	
 };
 
@@ -188,6 +222,7 @@ function updateScore(player,pill){
 function makeSuper(player,pill){
 		pill.kill();
 		blinky.changeMode(GhostMode.Scared,"scared");
+		pinky.changeMode(GhostMode.Scared,"scared");
 		superTimer.add(6000, makeNormal,this);
 		superTimer.start();
 		
@@ -197,6 +232,8 @@ function makeSuper(player,pill){
 function makeNormal(){
 	if(blinky.mode !== GhostMode.Killed)
 		blinky.changeMode(GhostMode.BackToNormal,"blinky");
+	if(pinky.mode !== GhostMode.Killed)
+		pinky.changeMode(GhostMode.BackToNormal,"pinky");
 	modeChangeTimer.resume();
 }
 
@@ -219,8 +256,8 @@ function touchGhost(player, ghost){
 				player.y = Utils.tileToPixels(8);
 				player.body.reset(Utils.tileToPixels(9),Utils.tileToPixels(8));
 				
-				blinky.resetPosition();
-				blinky.move(Utils.Left);
+				ghost.resetPosition();
+				ghost.move(Utils.Left);
 			}
 			else
 			{
