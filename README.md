@@ -8,4 +8,4 @@ Simple pacman clone. This code is provided 'as-is', without any express or impli
 It was build using [phaser](https://github.com/photonstorm/phaser) game engine.
 
 ### Author
-[Zegis](http://dev.kofun.pl/)
+[Zegis](http://kofun.pl/)
