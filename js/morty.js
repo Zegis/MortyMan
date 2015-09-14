@@ -2,6 +2,7 @@
 /* global Utils */
 /*global GhostMode */
 /*global Ghost */
+/*global Blinky */
 
 var game = new Phaser.Game(Utils.mapWidth, Utils.mapHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update});
 var map, mapLayer;
@@ -35,7 +36,8 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	blinky = new Ghost(game, 1, 2, "blinky",26,0);
+	//blinky = new Ghost(game, 1, 2, "blinky",26,0);
+	blinky = new Blinky(game,1,2,"blinky",26,0);
 	blinky.move(Utils.Right);
 	
 	// create controls
