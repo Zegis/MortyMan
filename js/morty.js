@@ -126,7 +126,7 @@ function update(){
 	
 	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
-			blinky.makeDecision(player,map);
+			blinky.makeDecision(player,null,map);
 		else if(Utils.arrayContains(specialPoints,blinky.marker))
 			blinky.utilizeSpecialPoint(map);
 	}

@@ -82,18 +82,16 @@ Ghost.prototype.PositionChanged = function(){
 
 };
 
-Ghost.prototype.makeDecision = function(player, map)
+Ghost.prototype.makeDecision = function(player, additionalPoint, map)
 {
-	this.updateTarget(player);
+	this.updateTarget(player, additionalPoint);
 	this.decideDirection(map);
 }
 
-Ghost.prototype.updateTarget = function(player)
+Ghost.prototype.updateTarget = function(player, additionalPoint)
 {
-	console.log("Ghost function");
 	if(this.mode === GhostMode.Chase){
-		this.target.x = Utils.pixelsToTiles(player.x);
-		this.target.y = Utils.pixelsToTiles(player.y);
+		this.ChasingTarget(player, additionalPoint);
 	}
 	else if(this.mode === GhostMode.Scatter){
 		this.target.x = this.scatterTarget.x;
@@ -108,6 +106,13 @@ Ghost.prototype.updateTarget = function(player)
 		this.target.y = this.respawnTarget.y;
 	}
 };
+
+Ghost.prototype.ChasingTarget = function(player, additionalPoint)
+{
+	console.log("Ghost function");
+	this.target.x = Utils.pixelsToTiles(player.x);
+	this.target.y = Utils.pixelsToTiles(player.y);
+}
 
 Ghost.prototype.decideDirection = function(map){
 
@@ -215,7 +220,7 @@ Ghost.prototype.utilizeSpecialPoint = function(map){
 		this.resetPositionToPoint(this.marker);
 		
 		if(this.mode === GhostMode.Scared)
-			this.makeDecision(null,map);
+			this.makeDecision(null,null,map);
 		else
 		{
 			if(this.comingFrom === Utils.Left)
