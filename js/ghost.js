@@ -23,8 +23,6 @@ function Ghost(game, x, y, image, targetX, targetY){
 	this.mode = GhostMode.Scatter;
 	this.modeBeforeScared = GhostMode.Scatter;
 	
-	game.add.existing(this);
-	
 	this.startingTile = new Phaser.Point(x,y);
 };
 
@@ -233,5 +231,8 @@ Ghost.prototype.utilizeSpecialPoint = function(map){
 
 Ghost.prototype.respawn = function(){
 	this.loadTexture("blinky");
-	this.mode = GhostMode.Chase;
+	if(currentWave%2 === 0)
+		this.mode = GhostMode.Scatter;
+	else
+		this.mode = GhostMode.Chase;
 };

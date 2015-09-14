@@ -44,6 +44,9 @@ function create(){
 	pinky = new Pinky(game,26,2,"pinky",1,0);
 	pinky.move(Utils.Left);
 	
+	game.add.existing(blinky);
+	game.add.existing(pinky);
+	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
 	score = 0;
@@ -201,7 +204,9 @@ function update(){
 				+ pinky.target.x + " " 
 				+ pinky.target.y,20,20,"#CCC");
 				
-	game.debug.text(currentWave,20,50,"#CCC");
+	game.debug.text(currentWave,5,50,"#CCC");
+	game.debug.text("b " + blinky.mode,5,70,"#CCC");
+	game.debug.text("p " + pinky.mode,5,90,"#CCC");
 	
 };
 

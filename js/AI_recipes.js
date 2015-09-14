@@ -31,7 +31,7 @@ Pinky.prototype.ChasingTarget = function(player, additionalPoint)
 	switch(player.direction){
 		case Utils.Up:
 			Offset.x = 0;
-			Offset.y = 4;
+			Offset.y = -4;
 			break;
 		case Utils.Left:
 			Offset.x = -4;
@@ -39,7 +39,7 @@ Pinky.prototype.ChasingTarget = function(player, additionalPoint)
 			Utils.break;
 		case Utils.Down:
 			Offset.x = 0;
-			Offset.y = -4;
+			Offset.y = 4;
 			break;
 		case Utils.Right:
 			Offset.x = 4;
