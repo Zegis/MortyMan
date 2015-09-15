@@ -11,6 +11,8 @@ var controls;
 var scorePills, superPills;
 var scoreTxt, score;
 var blinky;
+var pinky;
+var clyde;
 var superTimer;
 var modeChangeTimer;
 var currentWave;
@@ -28,6 +30,7 @@ function preload(){
 	game.load.image("pacman","assets/pacman.png");
 	game.load.image("blinky","assets/red_ghost.png");
 	game.load.image("pinky","assets/pink_ghost.png");
+	game.load.image("clyde","assets/orange_ghost.png");
 	game.load.image("scared","assets/frighten_ghost.png");
 	game.load.image("killed","assets/killed_ghost.png");
 };
@@ -44,8 +47,12 @@ function create(){
 	pinky = new Pinky(game,26,2,"pinky",1,0);
 	pinky.move(Utils.Left);
 	
+	clyde = new Pinky(game,26,27,"clyde",1,30);
+	clyde.move(Utils.Left);
+	
 	game.add.existing(blinky);
 	game.add.existing(pinky);
+	game.add.existing(clyde);
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -125,6 +132,13 @@ function modeChange(){
 		else
 			pinky.changeMode(GhostMode.Scatter);
 	}
+	if(clyde.mode !== GhostMode.Killed)
+	{
+		if(clyde.mode === GhostMode.Scatter)
+			clyde.changeMode(GhostMode.Chase);
+		else
+			clyde.changeMode(GhostMode.Scatter);
+	}
 	if(currentWave < WaveTimes.length)
 	{
 		++currentWave;
@@ -139,6 +153,7 @@ function update(){
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	this.game.physics.arcade.overlap(player,pinky, touchGhost);
+	this.game.physics.arcade.overlap(player,clyde, touchGhost);
 	
 	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
@@ -155,6 +170,14 @@ function update(){
 			pinky.utilizeSpecialPoint(map);
 	}
 	this.game.physics.arcade.collide(pinky,mapLayer, ghostCollide);
+	
+	if(clyde.PositionChanged()){
+		if(Utils.arrayContains(decisionPoints,clyde.marker)) // if in decision point
+			clyde.makeDecision(player,null,map);
+		else if(Utils.arrayContains(specialPoints,clyde.marker))
+			clyde.utilizeSpecialPoint(map);
+	}
+	this.game.physics.arcade.collide(clyde,mapLayer, ghostCollide);
 	
 	
 	// check Key
@@ -187,6 +210,9 @@ function update(){
 		pinky.body.velocity.x = 0;
 		pinky.body.velocity.y = 0;
 		
+		clyde.body.velocity.x = 0;
+		clyde.body.velocity.y = 0;
+		
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
 		
@@ -198,6 +224,7 @@ function update(){
 	tunel(player);
 	tunel(blinky);
 	tunel(pinky);
+	tunel(clyde);
 	
 	game.debug.text(Utils.pixelsToTiles(player.x) + " " 
 				+ Utils.pixelsToTiles(player.y) + ","
@@ -228,6 +255,7 @@ function makeSuper(player,pill){
 		pill.kill();
 		blinky.changeMode(GhostMode.Scared,"scared");
 		pinky.changeMode(GhostMode.Scared,"scared");
+		clyde.changeMode(GhostMode.Scared,"scared");
 		superTimer.add(6000, makeNormal,this);
 		superTimer.start();
 		
@@ -239,6 +267,8 @@ function makeNormal(){
 		blinky.changeMode(GhostMode.BackToNormal,"blinky");
 	if(pinky.mode !== GhostMode.Killed)
 		pinky.changeMode(GhostMode.BackToNormal,"pinky");
+	if(clyde.mode !== GhostMode.Killed)
+		clyde.changeMode(GhostMode.BackToNormal,"clyde");
 	modeChangeTimer.resume();
 }
 

@@ -12,7 +12,6 @@ Blinky.prototype.constructor = Blinky;
 
 Blinky.prototype.ChasingTarget = function(player, additionalPoint)
 {
-	console.log("Blinky function");
 	this.target.x = Utils.pixelsToTiles(player.x);
 	this.target.y = Utils.pixelsToTiles(player.y);
 };
@@ -30,24 +29,18 @@ Pinky.prototype.ChasingTarget = function(player, additionalPoint)
 
 	switch(player.direction){
 		case Utils.Up:
-			Offset.x = 0;
 			Offset.y = -4;
 			break;
 		case Utils.Left:
 			Offset.x = -4;
-			Offset.y = 0;
 			Utils.break;
 		case Utils.Down:
-			Offset.x = 0;
 			Offset.y = 4;
 			break;
 		case Utils.Right:
 			Offset.x = 4;
-			Offset.y = 0;
 			break;
 	}
-
-	console.log("Pinky function!");
 	this.target.x = Utils.pixelsToTiles(player.x) + Offset.x;
 	this.target.y = Utils.pixelsToTiles(player.y) + Offset.y;
 }
