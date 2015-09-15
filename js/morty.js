@@ -47,7 +47,7 @@ function create(){
 	pinky = new Pinky(game,26,2,"pinky",1,0);
 	pinky.move(Utils.Left);
 	
-	clyde = new Pinky(game,26,27,"clyde",1,30);
+	clyde = new Clyde(game,26,27,"clyde",1,30);
 	clyde.move(Utils.Left);
 	
 	game.add.existing(blinky);
@@ -228,8 +228,8 @@ function update(){
 	
 	game.debug.text(Utils.pixelsToTiles(player.x) + " " 
 				+ Utils.pixelsToTiles(player.y) + ","
-				+ pinky.target.x + " " 
-				+ pinky.target.y,20,20,"#CCC");
+				+ clyde.target.x + " " 
+				+ clyde.target.y,20,20,"#CCC");
 				
 	game.debug.text(currentWave,5,50,"#CCC");
 	game.debug.text("b " + blinky.mode,5,70,"#CCC");
