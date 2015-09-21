@@ -69,14 +69,47 @@ Clyde.prototype.ChasingTarget = function(player, additionalPoint)
 	PlayerPoint.x = Utils.pixelsToTiles(player.x);
 	PlayerPoint.y = Utils.pixelsToTiles(player.y);
 	
-	if(Phaser.Point.distance(ClydePoint,PlayerPoint) < 8)
-	{
+	if(Phaser.Point.distance(ClydePoint,PlayerPoint) < 8){
 		this.target.x = this.scatterTarget.x;
 		this.target.y = this.scatterTarget.y;
 	}
-	else
-	{
+	else{
 		this.target.x = PlayerPoint.x;
 		this.target.y = PlayerPoint.y;
 	}
+}
+
+function Inky(game, x, y, image, targetX, targetY){
+	Ghost.call(this,game,x,y,image,targetX,targetY);
+};
+
+Inky.prototype = Object.create(Ghost.prototype);
+Inky.prototype.constructor = Inky;
+
+Inky.prototype.ChasingTarget = function(player, additionalPoint)
+{
+	// target.x = additionalPoint.x * 2 - player.x;
+	// target.y = additionalPoint.y * 2 - player.y;
+	
+	var Offset = { x: 0, y : 0};
+
+	switch(player.direction){
+		case Utils.Up:
+			Offset.y = -2;
+			break;
+		case Utils.Left:
+			Offset.x = -2;
+			Utils.break;
+		case Utils.Down:
+			Offset.y = 2;
+			break;
+		case Utils.Right:
+			Offset.x = 2;
+			break;
+	}
+	
+	this.target.x = (Utils.pixelsToTiles(player.x) + Offset.x) * 2
+		- Utils.pixelsToTiles(additionalPoint.x);
+	this.target.y = (Utils.pixelsToTiles(player.y) + Offset.y) * 2
+		- Utils.pixelsToTiles(additionalPoint.y);
 }

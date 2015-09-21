@@ -31,6 +31,7 @@ function preload(){
 	game.load.image("blinky","assets/red_ghost.png");
 	game.load.image("pinky","assets/pink_ghost.png");
 	game.load.image("clyde","assets/orange_ghost.png");
+	game.load.image("inky","assets/blue_ghost.png");
 	game.load.image("scared","assets/frighten_ghost.png");
 	game.load.image("killed","assets/killed_ghost.png");
 };
@@ -50,9 +51,13 @@ function create(){
 	clyde = new Clyde(game,26,27,"clyde",1,30);
 	clyde.move(Utils.Left);
 	
+	inky = new Inky(game,1,27,"inky",26,30);
+	inky.move(Utils.Left);
+	
 	game.add.existing(blinky);
 	game.add.existing(pinky);
 	game.add.existing(clyde);
+	game.add.existing(inky);
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -139,6 +144,13 @@ function modeChange(){
 		else
 			clyde.changeMode(GhostMode.Scatter);
 	}
+	if(inky.mode !== GhostMode.Killed)
+	{
+		if(inky.mode === GhostMode.Scatter)
+			inky.changeMode(GhostMode.Chase);
+		else
+			inky.changeMode(GhostMode.Scatter);
+	}
 	if(currentWave < WaveTimes.length)
 	{
 		++currentWave;
@@ -154,6 +166,7 @@ function update(){
 	this.game.physics.arcade.overlap(player,blinky, touchGhost);
 	this.game.physics.arcade.overlap(player,pinky, touchGhost);
 	this.game.physics.arcade.overlap(player,clyde, touchGhost);
+	this.game.physics.arcade.overlap(player,inky, touchGhost);
 	
 	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
@@ -178,6 +191,14 @@ function update(){
 			clyde.utilizeSpecialPoint(map);
 	}
 	this.game.physics.arcade.collide(clyde,mapLayer, ghostCollide);
+	
+	if(inky.PositionChanged()){
+		if(Utils.arrayContains(decisionPoints,inky.marker)) // if in decision point
+			inky.makeDecision(player,blinky,map);
+		else if(Utils.arrayContains(specialPoints,inky.marker))
+			inky.utilizeSpecialPoint(map);
+	}
+	this.game.physics.arcade.collide(inky,mapLayer, ghostCollide);
 	
 	
 	// check Key
@@ -213,6 +234,9 @@ function update(){
 		clyde.body.velocity.x = 0;
 		clyde.body.velocity.y = 0;
 		
+		inky.body.velocity.x = 0;
+		inky.body.velocity.y = 0;
+		
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
 		
@@ -225,11 +249,12 @@ function update(){
 	tunel(blinky);
 	tunel(pinky);
 	tunel(clyde);
+	tunel(inky);
 	
 	game.debug.text(Utils.pixelsToTiles(player.x) + " " 
 				+ Utils.pixelsToTiles(player.y) + ","
-				+ clyde.target.x + " " 
-				+ clyde.target.y,20,20,"#CCC");
+				+ inky.target.x + " " 
+				+ inky.target.y,20,20,"#CCC");
 				
 	game.debug.text(currentWave,5,50,"#CCC");
 	game.debug.text("b " + blinky.mode,5,70,"#CCC");
@@ -256,6 +281,7 @@ function makeSuper(player,pill){
 		blinky.changeMode(GhostMode.Scared,"scared");
 		pinky.changeMode(GhostMode.Scared,"scared");
 		clyde.changeMode(GhostMode.Scared,"scared");
+		inky.changeMode(GhostMode.Scared,"scared");
 		superTimer.add(6000, makeNormal,this);
 		superTimer.start();
 		
@@ -269,6 +295,8 @@ function makeNormal(){
 		pinky.changeMode(GhostMode.BackToNormal,"pinky");
 	if(clyde.mode !== GhostMode.Killed)
 		clyde.changeMode(GhostMode.BackToNormal,"clyde");
+	if(inky.mode !== GhostMode.Killed)
+		inky.changeMode(GhostMode.BackToNormal,"inky");
 	modeChangeTimer.resume();
 }
 
