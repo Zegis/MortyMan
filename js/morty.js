@@ -150,38 +150,15 @@ function update(){
 	
 	this.game.physics.arcade.overlap(player,ghosts,touchGhost);
 	
-	if(blinky.PositionChanged()){
-		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
-			blinky.makeDecision(player,null,map);
-		else if(Utils.arrayContains(specialPoints,blinky.marker))
-			blinky.utilizeSpecialPoint(map);
+	ghosts.forEach(function(ghost){
+	if(ghost.PositionChanged()){
+		if(Utils.arrayContains(decisionPoints,ghost.marker)) // if in decision point
+			ghost.makeDecision(player,blinky,map);
+		else if(Utils.arrayContains(specialPoints,ghost.marker))
+			ghost.utilizeSpecialPoint(map);
 	}
-	this.game.physics.arcade.collide(blinky,mapLayer, ghostCollide);
-	
-	if(pinky.PositionChanged()){
-		if(Utils.arrayContains(decisionPoints,pinky.marker)) // if in decision point
-			pinky.makeDecision(player,null,map);
-		else if(Utils.arrayContains(specialPoints,pinky.marker))
-			pinky.utilizeSpecialPoint(map);
-	}
-	this.game.physics.arcade.collide(pinky,mapLayer, ghostCollide);
-	
-	if(clyde.PositionChanged()){
-		if(Utils.arrayContains(decisionPoints,clyde.marker)) // if in decision point
-			clyde.makeDecision(player,null,map);
-		else if(Utils.arrayContains(specialPoints,clyde.marker))
-			clyde.utilizeSpecialPoint(map);
-	}
-	this.game.physics.arcade.collide(clyde,mapLayer, ghostCollide);
-	
-	if(inky.PositionChanged()){
-		if(Utils.arrayContains(decisionPoints,inky.marker)) // if in decision point
-			inky.makeDecision(player,blinky,map);
-		else if(Utils.arrayContains(specialPoints,inky.marker))
-			inky.utilizeSpecialPoint(map);
-	}
-	this.game.physics.arcade.collide(inky,mapLayer, ghostCollide);
-	
+	this.game.physics.arcade.collide(ghost,mapLayer, ghostCollide);
+	},this);	
 	
 	// check Key
 	if(controls.left.isDown)
@@ -294,8 +271,10 @@ function touchGhost(player, ghost){
 				player.y = Utils.tileToPixels(8);
 				player.body.reset(Utils.tileToPixels(9),Utils.tileToPixels(8));
 				
-				ghost.resetPosition();
-				ghost.move(Utils.Left);
+				ghosts.forEach(function(ghost){
+					ghost.resetPosition();
+					ghost.move(Utils.Left);
+				},this);
 			}
 			else
 			{
