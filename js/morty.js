@@ -13,6 +13,7 @@ var scoreTxt, score;
 var blinky;
 var pinky;
 var clyde;
+var inky;
 var superTimer;
 var modeChangeTimer;
 var currentWave;

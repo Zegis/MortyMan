@@ -88,8 +88,8 @@ Inky.prototype.constructor = Inky;
 
 Inky.prototype.ChasingTarget = function(player, additionalPoint)
 {
-	// target.x = additionalPoint.x * 2 - player.x;
-	// target.y = additionalPoint.y * 2 - player.y;
+	// target.x = player.x * 2 - additionalPoint.x;
+	// target.y = player.y * 2 - additionalPoint.y;
 	
 	var Offset = { x: 0, y : 0};
 
