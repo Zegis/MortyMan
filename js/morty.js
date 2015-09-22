@@ -10,10 +10,14 @@ var player;
 var controls;
 var scorePills, superPills;
 var scoreTxt, score;
+
 var blinky;
 var pinky;
 var clyde;
 var inky;
+
+var ghosts;
+
 var superTimer;
 var modeChangeTimer;
 var currentWave;
@@ -43,22 +47,20 @@ function create(){
 	createPlayer();
 	
 	//blinky = new Ghost(game, 1, 2, "blinky",26,0);
-	blinky = new Blinky(game,1,2,"blinky",26,0);
-	blinky.move(Utils.Right);
-	
-	pinky = new Pinky(game,26,2,"pinky",1,0);
-	pinky.move(Utils.Left);
-	
-	clyde = new Clyde(game,26,27,"clyde",1,30);
-	clyde.move(Utils.Left);
-	
+	blinky = new Blinky(game,1,2,"blinky",26,0);	
+	pinky = new Pinky(game,26,2,"pinky",1,0);	
+	clyde = new Clyde(game,26,27,"clyde",1,30);	
 	inky = new Inky(game,1,27,"inky",26,30);
-	inky.move(Utils.Left);
 	
-	game.add.existing(blinky);
-	game.add.existing(pinky);
-	game.add.existing(clyde);
-	game.add.existing(inky);
+	ghosts = game.add.group();
+	ghosts.add(blinky);
+	ghosts.add(pinky);
+	ghosts.add(clyde);
+	ghosts.add(inky);
+	
+	ghosts.forEach(function(ghost){
+	ghost.move(Utils.Left);
+	},this);
 	
 	// create controls
 	controls = game.input.keyboard.createCursorKeys();
@@ -124,34 +126,15 @@ function createPlayer(){
 }
 
 function modeChange(){
-	if(blinky.mode !== GhostMode.Killed)
+	ghosts.forEach(function(ghost){
+	if(ghost.mode !== GhostMode.Killed)
 	{
-		if(blinky.mode === GhostMode.Scatter)
-			blinky.changeMode(GhostMode.Chase);
+		if(ghost.mode === GhostMode.Scatter)
+			ghost.changeMode(GhostMode.Chase);
 		else
-			blinky.changeMode(GhostMode.Scatter);
-	}
-	if(pinky.mode !== GhostMode.Killed)
-	{
-		if(pinky.mode === GhostMode.Scatter)
-			pinky.changeMode(GhostMode.Chase);
-		else
-			pinky.changeMode(GhostMode.Scatter);
-	}
-	if(clyde.mode !== GhostMode.Killed)
-	{
-		if(clyde.mode === GhostMode.Scatter)
-			clyde.changeMode(GhostMode.Chase);
-		else
-			clyde.changeMode(GhostMode.Scatter);
-	}
-	if(inky.mode !== GhostMode.Killed)
-	{
-		if(inky.mode === GhostMode.Scatter)
-			inky.changeMode(GhostMode.Chase);
-		else
-			inky.changeMode(GhostMode.Scatter);
-	}
+			ghost.changeMode(GhostMode.Scatter);
+	}},this);
+	
 	if(currentWave < WaveTimes.length)
 	{
 		++currentWave;
@@ -164,10 +147,8 @@ function update(){
 	this.game.physics.arcade.collide(player,mapLayer);
 	this.game.physics.arcade.overlap(player,scorePills,updateScore);
 	this.game.physics.arcade.overlap(player,superPills, makeSuper);
-	this.game.physics.arcade.overlap(player,blinky, touchGhost);
-	this.game.physics.arcade.overlap(player,pinky, touchGhost);
-	this.game.physics.arcade.overlap(player,clyde, touchGhost);
-	this.game.physics.arcade.overlap(player,inky, touchGhost);
+	
+	this.game.physics.arcade.overlap(player,ghosts,touchGhost);
 	
 	if(blinky.PositionChanged()){
 		if(Utils.arrayContains(decisionPoints,blinky.marker)) // if in decision point
@@ -226,17 +207,10 @@ function update(){
 	
 	if(scorePills.countDead() == scorePills.length)
 	{
-		blinky.body.velocity.x = 0;
-		blinky.body.velocity.y = 0;
-		
-		pinky.body.velocity.x = 0;
-		pinky.body.velocity.y = 0;
-		
-		clyde.body.velocity.x = 0;
-		clyde.body.velocity.y = 0;
-		
-		inky.body.velocity.x = 0;
-		inky.body.velocity.y = 0;
+		ghosts.forEach(function(ghost){
+			ghost.body.velocity.x = 0;
+			ghost.body.velocity.y = 0;
+		},this);
 		
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
@@ -247,10 +221,10 @@ function update(){
 	}
 		
 	tunel(player);
-	tunel(blinky);
-	tunel(pinky);
-	tunel(clyde);
-	tunel(inky);
+	
+	ghosts.forEach(function(ghost){
+		tunel(ghost);
+	},this);
 	
 	game.debug.text(Utils.pixelsToTiles(player.x) + " " 
 				+ Utils.pixelsToTiles(player.y) + ","
@@ -279,10 +253,10 @@ function updateScore(player,pill){
 
 function makeSuper(player,pill){
 		pill.kill();
-		blinky.changeMode(GhostMode.Scared,"scared");
-		pinky.changeMode(GhostMode.Scared,"scared");
-		clyde.changeMode(GhostMode.Scared,"scared");
-		inky.changeMode(GhostMode.Scared,"scared");
+		
+		ghosts.forEach(function(ghost){
+			ghost.changeMode(GhostMode.Scared,"scared");
+		},this);
 		superTimer.add(6000, makeNormal,this);
 		superTimer.start();
 		
