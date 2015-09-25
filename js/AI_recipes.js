@@ -16,6 +16,14 @@ Blinky.prototype.ChasingTarget = function(player, additionalPoint)
 	this.target.y = Utils.pixelsToTiles(player.y);
 };
 
+Blinky.prototype.respawn = function(){
+	this.loadTexture("blinky");
+	if(currentWave%2 === 0)
+		this.mode = GhostMode.Scatter;
+	else
+		this.mode = GhostMode.Chase;
+};
+
 function Pinky(game, x, y, image, targetX, targetY){
 	Ghost.call(this,game,x,y,image,targetX,targetY);
 };
@@ -44,6 +52,14 @@ Pinky.prototype.ChasingTarget = function(player, additionalPoint)
 	this.target.x = Utils.pixelsToTiles(player.x) + Offset.x;
 	this.target.y = Utils.pixelsToTiles(player.y) + Offset.y;
 }
+
+Pinky.prototype.respawn = function(){
+	this.loadTexture("pinky");
+	if(currentWave%2 === 0)
+		this.mode = GhostMode.Scatter;
+	else
+		this.mode = GhostMode.Chase;
+};
 
 function Clyde(game, x, y, image, targetX, targetY){
 	Ghost.call(this, game, x, y, image, targetX, targetY);
@@ -79,6 +95,14 @@ Clyde.prototype.ChasingTarget = function(player, additionalPoint)
 	}
 }
 
+Clyde.prototype.respawn = function(){
+	this.loadTexture("clyde");
+	if(currentWave%2 === 0)
+		this.mode = GhostMode.Scatter;
+	else
+		this.mode = GhostMode.Chase;
+};
+
 function Inky(game, x, y, image, targetX, targetY){
 	Ghost.call(this,game,x,y,image,targetX,targetY);
 };
@@ -112,4 +136,12 @@ Inky.prototype.ChasingTarget = function(player, additionalPoint)
 		- Utils.pixelsToTiles(additionalPoint.x);
 	this.target.y = (Utils.pixelsToTiles(player.y) + Offset.y) * 2
 		- Utils.pixelsToTiles(additionalPoint.y);
-}
+};
+
+Inky.prototype.respawn = function(){
+	this.loadTexture("inky");
+	if(currentWave%2 === 0)
+		this.mode = GhostMode.Scatter;
+	else
+		this.mode = GhostMode.Chase;
+};

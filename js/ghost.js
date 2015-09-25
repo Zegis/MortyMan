@@ -178,8 +178,6 @@ Ghost.prototype.collide = function(){
 };
 
 Ghost.prototype.changeMode = function(newMode, texture){
-	// if(this.mode != GhostMode.scared)
-		// this.reverse();
 	
 	if(newMode === GhostMode.Scared)
 		this.modeBeforeScared = this.mode;

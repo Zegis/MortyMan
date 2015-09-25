@@ -287,7 +287,6 @@ function touchGhost(player, ghost){
 }
 
 function ghostCollide(ghost, tile){
-	
 	ghost.updateDirections(map);
 	ghost.collide();
 }
