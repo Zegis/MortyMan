@@ -1,7 +1,7 @@
 /* global phaser */
 /* global Utils */
 
-var GhostMode = { Scared : 0, Chase : 1, Scatter : 2, Killed : 3, BackToNormal : 9 };
+var GhostMode = { Scared : 0, Chase : 1, Scatter : 2, Killed : 3, BackToNormal : 4 };
 
 function Ghost(game, x, y, image, targetX, targetY){
 	Phaser.Sprite.call(this, game, Utils.TILE_SIZE * x, Utils.TILE_SIZE * y, image);
@@ -20,6 +20,8 @@ function Ghost(game, x, y, image, targetX, targetY){
 	this.directions = [null, null, null, null]
 	this.distance = [null, null, null, null];
 	
+	this.speedModifiers = [0.6,0.95,0.95,0.95,0.95];
+	
 	this.mode = GhostMode.Scatter;
 	this.modeBeforeScared = GhostMode.Scatter;
 	
@@ -34,23 +36,23 @@ Ghost.prototype.respawnTarget = new Phaser.Point(13,11);
 Ghost.prototype.move = function(direction){
 	if(direction === Utils.Up)
 	{
-		this.body.velocity.y = -Utils.Speed;
+		this.body.velocity.y = -(Utils.Speed * this.speedModifiers[this.mode]);
 		this.comingFrom = Utils.Down;
 		
 	}
 	else if(direction === Utils.Down)
 	{
-		this.body.velocity.y = Utils.Speed;
+		this.body.velocity.y = (Utils.Speed * this.speedModifiers[this.mode]);
 		this.comingFrom = Utils.Up;
 	}
 	else if(direction === Utils.Left)
 	{
-		this.body.velocity.x = -Utils.Speed;
+		this.body.velocity.x = -(Utils.Speed * this.speedModifiers[this.mode]);
 		this.comingFrom = Utils.Right;
 	}
 	else if(direction === Utils.Right)
 	{
-		this.body.velocity.x = Utils.Speed;
+		this.body.velocity.x = (Utils.Speed * this.speedModifiers[this.mode]);
 		this.comingFrom = Utils.Left;
 	}
 };
