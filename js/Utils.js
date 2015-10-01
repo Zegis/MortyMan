@@ -9,6 +9,7 @@ var Utils = {
 	Left: 1,
 	Down: 2,
 	Right: 3,
+	Speed: 93,
 	arrayContains: function(array, object){
 		var i = array.length;
 		while(i--)

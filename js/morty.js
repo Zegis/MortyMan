@@ -163,22 +163,22 @@ function update(){
 	// check Key
 	if(controls.left.isDown)
 	{
-		player.body.velocity.x = -93;
+		player.body.velocity.x = - Utils.Speed;
 		player.direction = Utils.Left;
 	}
 	else if(controls.right.isDown)
 	{
-		player.body.velocity.x = 93;
+		player.body.velocity.x = Utils.Speed;
 		player.direction = Utils.Right;
 	}
 	if(controls.down.isDown)
 	{
-		player.body.velocity.y = 93;
+		player.body.velocity.y = Utils.Speed;
 		player.direction = Utils.Down;
 	}
 	else if(controls.up.isDown)
 	{
-		player.body.velocity.y = -93;
+		player.body.velocity.y = -Utils.Speed;
 		player.direction = Utils.Up;
 	}
 	

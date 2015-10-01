@@ -34,23 +34,23 @@ Ghost.prototype.respawnTarget = new Phaser.Point(13,11);
 Ghost.prototype.move = function(direction){
 	if(direction === Utils.Up)
 	{
-		this.body.velocity.y = -93;
+		this.body.velocity.y = -Utils.Speed;
 		this.comingFrom = Utils.Down;
 		
 	}
 	else if(direction === Utils.Down)
 	{
-		this.body.velocity.y = 93;
+		this.body.velocity.y = Utils.Speed;
 		this.comingFrom = Utils.Up;
 	}
 	else if(direction === Utils.Left)
 	{
-		this.body.velocity.x = -93;
+		this.body.velocity.x = -Utils.Speed;
 		this.comingFrom = Utils.Right;
 	}
 	else if(direction === Utils.Right)
 	{
-		this.body.velocity.x = 93;
+		this.body.velocity.x = Utils.Speed;
 		this.comingFrom = Utils.Left;
 	}
 };
