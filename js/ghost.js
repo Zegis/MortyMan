@@ -101,7 +101,7 @@ Ghost.prototype.updateTarget = function(player, additionalPoint)
 		this.target.x = Math.random() * (Utils.mapWidth - 1) + 1;
 		this.target.y = Math.random() * (Utils.mapHeight - 1) + 1;
 	}
-	else{ // if it's not chasing, or scattering nor scared it's killed
+	else{ // if it's not chasing, or scattering nor scared - it's killed
 		this.target.x = this.respawnTarget.x;
 		this.target.y = this.respawnTarget.y;
 	}

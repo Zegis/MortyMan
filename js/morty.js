@@ -46,7 +46,6 @@ function create(){
 	createMap();
 	createPlayer();
 	
-	//blinky = new Ghost(game, 1, 2, "blinky",26,0);
 	blinky = new Blinky(game,1,2,"blinky",26,0);	
 	pinky = new Pinky(game,26,2,"pinky",1,0);	
 	clyde = new Clyde(game,26,27,"clyde",1,30);	
@@ -62,7 +61,6 @@ function create(){
 	ghost.move(Utils.Left);
 	},this);
 	
-	// create controls
 	controls = game.input.keyboard.createCursorKeys();
 	score = 0;
 	lives = 3;
@@ -160,7 +158,6 @@ function update(){
 	this.game.physics.arcade.collide(ghost,mapLayer, ghostCollide);
 	},this);	
 	
-	// check Key
 	if(controls.left.isDown)
 	{
 		player.body.velocity.x = - Utils.Speed;
