@@ -192,6 +192,26 @@ Ghost.prototype.changeMode = function(newMode, texture){
 	
 	if(texture)
 		this.loadTexture(texture);
+		
+	this.updateVelocity();
+};
+
+Ghost.prototype.updateVelocity = function(){
+	console.log("Zmienie weloczity do mode" + this.mode);
+	if(this.body.velocity.x !== 0)
+	{
+		if(this.body.velocity.x < 0)
+			this.body.velocity.x = -(Utils.Speed * this.speedModifiers[this.mode]);
+		else
+			this.body.velocity.x = (Utils.Speed * this.speedModifiers[this.mode]);
+	}	
+	else if(this.body.velocity.y !== 0)
+	{
+		if(this.body.velocity.y < 0)
+			this.body.velocity.y = - (Utils.Speed * this.speedModifiers[this.mode]);
+		else
+			this.body.velocity.y = (Utils.Speed * this.speedModifiers[this.mode]);
+	}
 };
 
 Ghost.prototype.reverse = function(){
