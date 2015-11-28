@@ -7,7 +7,7 @@ Simple pacman clone. This code is provided 'as-is', without any express or impli
 It was build using [phaser](https://github.com/photonstorm/phaser) game engine, if you want to read about some aspects of creating it - check out my [dev blog](http://kofun.pl/tag/mortyman/)
 
 ### Links to specific dev posts:
-*[Creating AI](http://kofun.pl/projects/illusion-of-intelligence-ai-for-pacman/)
+* [Creating AI](http://kofun.pl/projects/illusion-of-intelligence-ai-for-pacman/)
 
 ### Author
 [Zegis](http://kofun.pl/)
